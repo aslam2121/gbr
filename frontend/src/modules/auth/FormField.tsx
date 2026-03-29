@@ -4,7 +4,7 @@ import { type FieldError, type UseFormRegisterReturn } from "react-hook-form";
 
 interface FormFieldProps {
   label: string;
-  error?: FieldError;
+  error?: FieldError | { message?: string };
   children: React.ReactNode;
 }
 
