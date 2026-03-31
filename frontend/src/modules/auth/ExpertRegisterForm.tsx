@@ -1,229 +1,169 @@
 "use client";
 
 import { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
-import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
 import Link from "next/link";
-import axios from "axios";
-import { AuthLayout, SubmitButton, ErrorAlert } from "./AuthLayout";
-import { FormField, Input, Select, Textarea } from "./FormField";
-import { MultiSelect } from "./MultiSelect";
-
-const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
-
-const EXPERTISE_AREAS = [
-  { value: "strategy", label: "Strategy" },
-  { value: "finance", label: "Finance & Accounting" },
-  { value: "marketing", label: "Marketing" },
-  { value: "technology", label: "Technology" },
-  { value: "operations", label: "Operations" },
-  { value: "legal", label: "Legal & Compliance" },
-  { value: "hr", label: "Human Resources" },
-  { value: "sales", label: "Sales & BD" },
-  { value: "product", label: "Product Management" },
-  { value: "data", label: "Data & Analytics" },
-];
-
-const COUNTRIES = [
-  { value: "US", label: "United States" },
-  { value: "GB", label: "United Kingdom" },
-  { value: "DE", label: "Germany" },
-  { value: "FR", label: "France" },
-  { value: "CA", label: "Canada" },
-  { value: "AU", label: "Australia" },
-  { value: "IN", label: "India" },
-  { value: "SG", label: "Singapore" },
-  { value: "AE", label: "UAE" },
-  { value: "OTHER", label: "Other" },
-];
-
-interface ExpertFormData {
-  full_name: string;
-  email: string;
-  password: string;
-  expertise_areas: string[];
-  experience_years: string;
-  hourly_rate: string;
-  country: string;
-  availability: string;
-  bio: string;
-}
 
 export function ExpertRegisterForm() {
-  const router = useRouter();
-  const [error, setError] = useState("");
-  const {
-    register,
-    handleSubmit,
-    control,
-    formState: { errors, isSubmitting },
-  } = useForm<ExpertFormData>({
-    defaultValues: { expertise_areas: [] },
-  });
-
-  const onSubmit = async (data: ExpertFormData) => {
-    setError("");
-    try {
-      await axios.post(`${STRAPI_URL}/api/auth/local/register`, {
-        username: data.email.split("@")[0] + "_" + Date.now(),
-        email: data.email,
-        password: data.password,
-        user_type: "expert",
-        display_name: data.full_name,
-        expert_name: data.full_name,
-        specialty: data.expertise_areas.join(", "),
-      });
-
-      const result = await signIn("credentials", {
-        redirect: false,
-        identifier: data.email,
-        password: data.password,
-      });
-
-      if (result?.error) {
-        setError("Account created but login failed. Please try logging in.");
-        return;
-      }
-
-      router.push("/dashboard");
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        setError(
-          err.response?.data?.error?.message || "Registration failed. Please try again."
-        );
-      } else {
-        setError("Registration failed. Please try again.");
-      }
-    }
-  };
+  const [showCustomFee, setShowCustomFee] = useState(false);
 
   return (
-    <AuthLayout
-      title="Register as an Expert"
-      subtitle="Share your expertise and connect with businesses"
-      footer={
-        <>
-          Already have an account?{" "}
-          <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
-            Sign in
-          </Link>
-        </>
-      }
-    >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        {error && <ErrorAlert message={error} />}
+    <main className="bg-gray-50 py-10">
+      <div className="mx-auto max-w-4xl px-4">
+        <div className="overflow-hidden rounded-lg border-0 bg-white shadow-sm">
+          {/* Header */}
+          <div className="bg-amber-500 px-6 py-3 text-gray-900">
+            <h1 className="text-lg font-semibold">
+              <i className="bi bi-mortarboard me-2"></i>Expert Registration
+            </h1>
+          </div>
 
-        <FormField label="Full Name" error={errors.full_name}>
-          <Input
-            registration={register("full_name", { required: "Name is required" })}
-            placeholder="Dr. Alex Johnson"
-            error={errors.full_name}
-          />
-        </FormField>
+          {/* Form */}
+          <div className="p-6 lg:p-10">
+            <form>
+              {/* Personal Information */}
+              <h2 className="mb-3 border-b border-gray-200 pb-2 text-base font-semibold text-gray-900">Personal Information</h2>
+              <div className="grid grid-cols-1 gap-x-4 md:grid-cols-2">
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertFirstName">First Name *</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertFirstName" type="text" required />
+                </div>
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertLastName">Last Name *</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertLastName" type="text" required />
+                </div>
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertEmail">Email Address *</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertEmail" type="email" required />
+                </div>
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertPhone">Phone Number</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertPhone" type="tel" />
+                </div>
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertProfessionalName">Professional Name *</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertProfessionalName" type="text" required />
+                </div>
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertDob">Date of Birth *</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertDob" type="date" required />
+                </div>
+              </div>
 
-        <FormField label="Email" error={errors.email}>
-          <Input
-            type="email"
-            registration={register("email", {
-              required: "Email is required",
-              pattern: { value: /^\S+@\S+\.\S+$/, message: "Invalid email" },
-            })}
-            placeholder="alex@consulting.com"
-            error={errors.email}
-          />
-        </FormField>
+              {/* Expertise Information */}
+              <h2 className="mb-3 mt-4 border-b border-gray-200 pb-2 text-base font-semibold text-gray-900">Expertise Information</h2>
+              <div className="grid grid-cols-1 gap-x-4 md:grid-cols-2">
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertField">Field of Expertise *</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertField" type="text" required />
+                </div>
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertExperienceYears">Years of Experience *</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertExperienceYears" type="number" min={0} required />
+                </div>
+              </div>
+              <div className="mb-3">
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertSpecialisation">Specialization *</label>
+                <textarea className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertSpecialisation" rows={3} required></textarea>
+              </div>
+              <div className="mb-3">
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertWorkDescription">Work Experience Description *</label>
+                <textarea className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertWorkDescription" rows={4} required></textarea>
+              </div>
 
-        <FormField label="Password" error={errors.password}>
-          <Input
-            type="password"
-            registration={register("password", {
-              required: "Password is required",
-              minLength: { value: 6, message: "At least 6 characters" },
-            })}
-            placeholder="Min. 6 characters"
-            error={errors.password}
-          />
-        </FormField>
+              {/* Consultation Rates */}
+              <h2 className="mb-3 mt-4 border-b border-gray-200 pb-2 text-base font-semibold text-gray-900">Consultation Rates</h2>
+              <div className="grid grid-cols-1 gap-x-4 md:grid-cols-2">
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertConsultationFee">Consultation Fee per Hour *</label>
+                  <select
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                    id="expertConsultationFee"
+                    required
+                    defaultValue=""
+                    onChange={(e) => setShowCustomFee(e.target.value === "custom")}
+                  >
+                    <option value="" disabled>Select fee</option>
+                    <option value="50">$50/hour</option>
+                    <option value="100">$100/hour</option>
+                    <option value="150">$150/hour</option>
+                    <option value="200">$200/hour</option>
+                    <option value="custom">Custom Rate</option>
+                  </select>
+                </div>
+                {showCustomFee && (
+                  <div className="mb-3">
+                    <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertCustomFee">Custom Rate</label>
+                    <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertCustomFee" type="number" min={1} placeholder="Enter custom fee" required />
+                  </div>
+                )}
+              </div>
 
-        <FormField label="Areas of Expertise" error={errors.expertise_areas}>
-          <Controller
-            name="expertise_areas"
-            control={control}
-            rules={{ validate: (v) => v.length > 0 || "Select at least one area" }}
-            render={({ field }) => (
-              <MultiSelect
-                options={EXPERTISE_AREAS}
-                value={field.value}
-                onChange={field.onChange}
-                placeholder="Select expertise areas..."
-                error={!!errors.expertise_areas}
-              />
-            )}
-          />
-        </FormField>
+              {/* Location */}
+              <h2 className="mb-3 mt-4 border-b border-gray-200 pb-2 text-base font-semibold text-gray-900">Location</h2>
+              <div className="grid grid-cols-1 gap-x-4 md:grid-cols-2">
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertContinent">Continent *</label>
+                  <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertContinent" required defaultValue="">
+                    <option value="" disabled>Select continent</option>
+                    <option>Africa</option>
+                    <option>Asia</option>
+                    <option>Europe</option>
+                    <option>North America</option>
+                    <option>South America</option>
+                    <option>Oceania</option>
+                  </select>
+                </div>
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertCountry">Country *</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertCountry" type="text" required />
+                </div>
+              </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <FormField label="Years of Experience" error={errors.experience_years}>
-            <Select
-              options={[
-                { value: "1-3", label: "1-3 years" },
-                { value: "3-5", label: "3-5 years" },
-                { value: "5-10", label: "5-10 years" },
-                { value: "10-15", label: "10-15 years" },
-                { value: "15+", label: "15+ years" },
-              ]}
-              placeholder="Select"
-              registration={register("experience_years", { required: "Required" })}
-              error={errors.experience_years}
-            />
-          </FormField>
+              {/* Membership */}
+              <h2 className="mb-3 mt-4 border-b border-gray-200 pb-2 text-base font-semibold text-gray-900">Membership</h2>
+              <div className="mb-3">
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertMembership">Membership Duration *</label>
+                <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertMembership" required defaultValue="">
+                  <option value="" disabled>Select duration</option>
+                  <option>1 Month</option>
+                  <option>3 Months</option>
+                  <option>6 Months</option>
+                  <option>12 Months</option>
+                </select>
+              </div>
 
-          <FormField label="Hourly Rate (USD)" error={errors.hourly_rate}>
-            <Input
-              type="number"
-              registration={register("hourly_rate", { required: "Required" })}
-              placeholder="150"
-              error={errors.hourly_rate}
-            />
-          </FormField>
+              {/* Account Security */}
+              <h2 className="mb-3 mt-4 border-b border-gray-200 pb-2 text-base font-semibold text-gray-900">Account Security</h2>
+              <div className="grid grid-cols-1 gap-x-4 md:grid-cols-2">
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertPassword">Password *</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertPassword" type="password" required />
+                </div>
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertConfirmPassword">Confirm Password *</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertConfirmPassword" type="password" required />
+                </div>
+              </div>
+
+              {/* Terms */}
+              <div className="mt-2 flex items-center gap-2">
+                <input className="h-4 w-4 rounded border-gray-300" type="checkbox" id="expertTerms" required />
+                <label className="text-sm text-gray-700" htmlFor="expertTerms">I agree to the terms and policies.</label>
+              </div>
+
+              {/* Buttons */}
+              <div className="mt-4 flex flex-wrap justify-end gap-2">
+                <Link href="/register" className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50">
+                  <i className="bi bi-arrow-left me-1"></i>Back
+                </Link>
+                <button type="submit" className="rounded-md bg-amber-500 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-amber-600">
+                  <i className="bi bi-check-circle me-1"></i>Create Expert Account
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <FormField label="Country" error={errors.country}>
-            <Select
-              options={COUNTRIES}
-              placeholder="Select country"
-              registration={register("country", { required: "Required" })}
-              error={errors.country}
-            />
-          </FormField>
-
-          <FormField label="Availability" error={errors.availability}>
-            <Select
-              options={[
-                { value: "full_time", label: "Full-time" },
-                { value: "part_time", label: "Part-time" },
-                { value: "weekends", label: "Weekends only" },
-                { value: "project", label: "Project-based" },
-              ]}
-              placeholder="Select"
-              registration={register("availability", { required: "Required" })}
-              error={errors.availability}
-            />
-          </FormField>
-        </div>
-
-        <FormField label="Bio" error={errors.bio}>
-          <Textarea
-            registration={register("bio")}
-            placeholder="Describe your experience and what you can offer..."
-            error={errors.bio}
-          />
-        </FormField>
-
-        <SubmitButton loading={isSubmitting}>Create Expert Account</SubmitButton>
-      </form>
-    </AuthLayout>
+      </div>
+    </main>
   );
 }

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
 
 const NAV_LINKS = [
   { label: "Home", href: "/", icon: "bi-house-door" },
@@ -12,7 +13,7 @@ const NAV_LINKS = [
   { label: "Company", href: "/what-is/company", icon: "bi-image" },
   { label: "Investor", href: "/what-is/investor", icon: "bi-journal-text" },
   { label: "Expert", href: "/what-is/expert", icon: "bi-telephone" },
-  { label: "New Member", href: "/register", icon: "bi-person" },
+  { label: "New Member", href: "/register", icon: "bi-person", guestOnly: true },
   { label: "Messaging", href: "/messaging", icon: "bi-person" },
   { label: "Video Chat", href: "/calls", icon: "bi-person" },
   { label: "Contact Us", href: "/contact", icon: "bi-person" },
@@ -22,9 +23,18 @@ const NAV_LINKS = [
 
 export function Navbar() {
   const pathname = usePathname();
+  const { user, isLoggedIn } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
+
+  const loggedIn = isLoggedIn();
+
+  // Filter nav links based on auth state
+  const visibleLinks = NAV_LINKS.filter((link) => {
+    if (link.guestOnly && loggedIn) return false;
+    return true;
+  });
 
   // Close search on outside click
   useEffect(() => {
@@ -60,7 +70,7 @@ export function Navbar() {
         {/* Desktop nav */}
         <div className="hidden flex-1 overflow-x-auto xl:flex">
           <ul className="flex items-center gap-0 text-uppercase">
-            {NAV_LINKS.map((link) => (
+            {visibleLinks.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
@@ -73,6 +83,32 @@ export function Navbar() {
                 </Link>
               </li>
             ))}
+
+            {/* Auth items — shown when logged in */}
+            {loggedIn && (
+              <>
+                <li>
+                  <button
+                    className="flex flex-col items-center gap-0.5 px-2 py-1.5 text-[10px] font-medium uppercase text-white transition-colors hover:bg-white/10"
+                    type="button"
+                  >
+                    <i className="bi bi-bell text-base" />
+                    <span className="whitespace-nowrap leading-tight">Notifications</span>
+                  </button>
+                </li>
+                <li>
+                  <Link
+                    href="/dashboard"
+                    className={`flex flex-col items-center gap-0.5 px-2 py-1.5 text-[10px] font-medium uppercase text-white transition-colors ${
+                      isActive("/dashboard") ? "bg-white/10" : "hover:bg-white/10"
+                    }`}
+                  >
+                    <i className="bi bi-speedometer2 text-base" />
+                    <span className="whitespace-nowrap leading-tight">{user?.display_name || "Dashboard"}</span>
+                  </Link>
+                </li>
+              </>
+            )}
           </ul>
         </div>
 
@@ -113,7 +149,7 @@ export function Navbar() {
         <div className="border-t border-white/10 xl:hidden">
           <div className="mx-auto max-w-7xl px-4 py-3">
             <ul className="grid grid-cols-2 gap-1 sm:grid-cols-3">
-              {NAV_LINKS.map((link) => (
+              {visibleLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
@@ -126,6 +162,32 @@ export function Navbar() {
                   </Link>
                 </li>
               ))}
+
+              {/* Auth items in mobile — shown when logged in */}
+              {loggedIn && (
+                <>
+                  <li>
+                    <button
+                      className="flex w-full items-center gap-2 rounded px-3 py-2 text-sm uppercase text-white hover:bg-white/10"
+                      type="button"
+                    >
+                      <i className="bi bi-bell" />
+                      Notifications
+                    </button>
+                  </li>
+                  <li>
+                    <Link
+                      href="/dashboard"
+                      className={`flex items-center gap-2 rounded px-3 py-2 text-sm uppercase text-white ${
+                        isActive("/dashboard") ? "bg-white/10" : "hover:bg-white/10"
+                      }`}
+                    >
+                      <i className="bi bi-speedometer2" />
+                      {user?.display_name || "Dashboard"}
+                    </Link>
+                  </li>
+                </>
+              )}
             </ul>
           </div>
         </div>

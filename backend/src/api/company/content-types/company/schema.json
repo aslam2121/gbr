@@ -12,14 +12,10 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "name": {
+    "name_of_the_company": {
       "type": "string",
-      "required": true,
-      "maxLength": 255
-    },
-    "slug": {
-      "type": "uid",
-      "targetField": "name"
+      "maxLength": 255,
+      "required": true
     },
     "description": {
       "type": "richtext"
@@ -27,20 +23,38 @@
     "logo": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "industry": {
       "type": "enumeration",
-      "enum": ["tech", "finance", "healthcare", "energy", "manufacturing", "logistics", "education", "other"]
+      "enum": [
+        "tech",
+        "finance",
+        "healthcare",
+        "energy",
+        "manufacturing",
+        "logistics",
+        "education",
+        "other"
+      ]
     },
     "country": {
       "type": "string",
-      "required": true,
-      "maxLength": 100
+      "maxLength": 100,
+      "required": true
     },
     "continent": {
       "type": "enumeration",
-      "enum": ["asia", "europe", "north_america", "south_america", "africa", "oceania"]
+      "enum": [
+        "asia",
+        "europe",
+        "north_america",
+        "south_america",
+        "africa",
+        "oceania"
+      ]
     },
     "latitude": {
       "type": "float"
@@ -57,12 +71,273 @@
     },
     "employee_count": {
       "type": "enumeration",
-      "enum": ["s_1_10", "s_11_50", "s_51_200", "s_201_500", "s_500_plus"]
+      "enum": [
+        "s_1_10",
+        "s_11_50",
+        "s_51_200",
+        "s_201_500",
+        "s_500_plus"
+      ]
     },
     "owner": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "plugin::users-permissions.user"
+    },
+    "name_of_the_person": {
+      "type": "string"
+    },
+    "foundation_year": {
+      "type": "integer"
+    },
+    "foundation_country": {
+      "type": "enumeration",
+      "enum": [
+        "Afghanistan",
+        "Albania",
+        "Algeria",
+        "Andorra",
+        "Angola",
+        "Antigua & Deps",
+        "Argentina",
+        "Armenia",
+        "Australia",
+        "Austria",
+        "Azerbaijan",
+        "Bahamas",
+        "Bahrain",
+        "Bangladesh",
+        "Barbados",
+        "Belarus",
+        "Belgium",
+        "Belize",
+        "Benin",
+        "Bhutan",
+        "Bolivia",
+        "Bosnia Herzegovina",
+        "Botswana",
+        "Brazil",
+        "Brunei",
+        "Bulgaria",
+        "Burkina",
+        "Burundi",
+        "Cambodia",
+        "Cameroon",
+        "Canada",
+        "Cape Verde",
+        "Central African Rep",
+        "Chad",
+        "Chile",
+        "China",
+        "Colombia",
+        "Comoros",
+        "Congo",
+        "Congo {Democratic Rep}",
+        "Costa Rica",
+        "Croatia",
+        "Cuba",
+        "Cyprus",
+        "Czech Republic",
+        "Denmark",
+        "Djibouti",
+        "Dominica",
+        "Dominican Republic",
+        "East Timor",
+        "Ecuador",
+        "Egypt",
+        "El Salvador",
+        "Equatorial Guinea",
+        "Eritrea",
+        "Estonia",
+        "Ethiopia",
+        "Fiji",
+        "Finland",
+        "France",
+        "Gabon",
+        "Gambia",
+        "Georgia",
+        "Germany",
+        "Ghana",
+        "Greece",
+        "Grenada",
+        "Guatemala",
+        "Guinea",
+        "Guinea-Bissau",
+        "Guyana",
+        "Haiti",
+        "Honduras",
+        "Hungary",
+        "Iceland",
+        "India",
+        "Indonesia",
+        "Iran",
+        "Iraq",
+        "Ireland {Republic}",
+        "Israel",
+        "Italy",
+        "Ivory Coast",
+        "Jamaica",
+        "Japan",
+        "Jordan",
+        "Kazakhstan",
+        "Kenya",
+        "Kiribati",
+        "Korea North",
+        "Korea South",
+        "Kosovo",
+        "Kuwait",
+        "Kyrgyzstan",
+        "Laos",
+        "Latvia",
+        "Lebanon",
+        "Lesotho",
+        "Liberia",
+        "Libya",
+        "Liechtenstein",
+        "Lithuania",
+        "Luxembourg",
+        "Macedonia",
+        "Madagascar",
+        "Malawi",
+        "Malaysia",
+        "Maldives",
+        "Mali",
+        "Malta",
+        "Marshall Islands",
+        "Mauritania",
+        "Mauritius",
+        "Mexico",
+        "Micronesia",
+        "Moldova",
+        "Monaco",
+        "Mongolia",
+        "Montenegro",
+        "Morocco",
+        "Mozambique",
+        "Myanmar, {Burma}",
+        "Namibia",
+        "Nauru",
+        "Nepal",
+        "Netherlands",
+        "New Zealand",
+        "Nicaragua",
+        "Niger",
+        "Nigeria",
+        "Norway",
+        "Oman",
+        "Pakistan",
+        "Palau",
+        "Panama",
+        "Papua New Guinea",
+        "Paraguay",
+        "Peru",
+        "Philippines",
+        "Poland",
+        "Portugal",
+        "Qatar",
+        "Romania",
+        "Russian Federation",
+        "Rwanda",
+        "St Kitts & Nevis",
+        "St Lucia",
+        "Saint Vincent & the Grenadines",
+        "Samoa",
+        "San Marino",
+        "Sao Tome & Principe",
+        "Saudi Arabia",
+        "Senegal",
+        "Serbia",
+        "Seychelles",
+        "Sierra Leone",
+        "Singapore",
+        "Slovakia",
+        "Slovenia",
+        "Solomon Islands",
+        "Somalia",
+        "South Africa",
+        "South Sudan",
+        "Spain",
+        "Sri Lanka",
+        "Sudan",
+        "Suriname",
+        "Swaziland",
+        "Sweden",
+        "Switzerland",
+        "Syria",
+        "Taiwan",
+        "Tajikistan",
+        "Tanzania",
+        "Thailand",
+        "Togo",
+        "Tonga",
+        "Trinidad & Tobago",
+        "Tunisia",
+        "Turkey",
+        "Turkmenistan",
+        "Tuvalu",
+        "Uganda",
+        "Ukraine",
+        "United Arab Emirates",
+        "United Kingdom",
+        "United States",
+        "Uruguay",
+        "Uzbekistan",
+        "Vanuatu",
+        "Vatican City",
+        "Venezuela",
+        "Vietnam",
+        "Yemen",
+        "Zambia",
+        "Zimbabwe"
+      ]
+    },
+    "area_of_specification": {
+      "type": "enumeration",
+      "enum": [
+        "Health",
+        "Financial services",
+        "IT",
+        "Consumer products and services",
+        "Logistics and Transportation",
+        "Business products and services",
+        "Construction and real estate",
+        "Trading",
+        "Manufacturing",
+        "Advertising and marketing",
+        "Agriculture"
+      ]
+    },
+    "annual_revenue_data": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "files"
+      ]
+    },
+    "requirements_for_partnership": {
+      "type": "text"
+    },
+    "existing_partners": {
+      "type": "string"
+    },
+    "email": {
+      "type": "email",
+      "required": true,
+      "unique": true
+    },
+    "telephone_mobile": {
+      "type": "biginteger"
+    },
+    "short_description": {
+      "type": "text"
+    },
+    "membership_duration": {
+      "type": "enumeration",
+      "enum": [
+        "year 1",
+        "years 2",
+        "years 3"
+      ]
     }
   }
 }

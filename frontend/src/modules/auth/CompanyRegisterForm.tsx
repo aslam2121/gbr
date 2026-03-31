@@ -1,197 +1,174 @@
 "use client";
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
 import Link from "next/link";
-import axios from "axios";
-import { AuthLayout, SubmitButton, ErrorAlert } from "./AuthLayout";
-import { FormField, Input, Select, Textarea } from "./FormField";
-
-const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
-
-const INDUSTRIES = [
-  { value: "technology", label: "Technology" },
-  { value: "healthcare", label: "Healthcare" },
-  { value: "finance", label: "Finance" },
-  { value: "manufacturing", label: "Manufacturing" },
-  { value: "retail", label: "Retail" },
-  { value: "energy", label: "Energy" },
-  { value: "real_estate", label: "Real Estate" },
-  { value: "education", label: "Education" },
-  { value: "other", label: "Other" },
-];
-
-const COUNTRIES = [
-  { value: "US", label: "United States" },
-  { value: "GB", label: "United Kingdom" },
-  { value: "DE", label: "Germany" },
-  { value: "FR", label: "France" },
-  { value: "CA", label: "Canada" },
-  { value: "AU", label: "Australia" },
-  { value: "IN", label: "India" },
-  { value: "SG", label: "Singapore" },
-  { value: "AE", label: "UAE" },
-  { value: "OTHER", label: "Other" },
-];
-
-interface CompanyFormData {
-  company_name: string;
-  email: string;
-  password: string;
-  industry: string;
-  country: string;
-  website: string;
-  employee_count: string;
-  description: string;
-}
 
 export function CompanyRegisterForm() {
-  const router = useRouter();
-  const [error, setError] = useState("");
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<CompanyFormData>();
-
-  const onSubmit = async (data: CompanyFormData) => {
-    setError("");
-    try {
-      await axios.post(`${STRAPI_URL}/api/auth/local/register`, {
-        username: data.email.split("@")[0] + "_" + Date.now(),
-        email: data.email,
-        password: data.password,
-        user_type: "company",
-        display_name: data.company_name,
-        company_name: data.company_name,
-      });
-
-      const result = await signIn("credentials", {
-        redirect: false,
-        identifier: data.email,
-        password: data.password,
-      });
-
-      if (result?.error) {
-        setError("Account created but login failed. Please try logging in.");
-        return;
-      }
-
-      router.push("/dashboard");
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        setError(
-          err.response?.data?.error?.message || "Registration failed. Please try again."
-        );
-      } else {
-        setError("Registration failed. Please try again.");
-      }
-    }
-  };
-
   return (
-    <AuthLayout
-      title="Register as a Company"
-      subtitle="List your business and connect with investors and experts"
-      footer={
-        <>
-          Already have an account?{" "}
-          <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
-            Sign in
-          </Link>
-        </>
-      }
-    >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        {error && <ErrorAlert message={error} />}
+    <main className="bg-gray-50 py-10">
+      <div className="mx-auto max-w-4xl px-4">
+        <div className="overflow-hidden rounded-lg border-0 bg-white shadow-sm">
+          {/* Header */}
+          <div className="px-6 py-3 text-white" style={{ backgroundColor: "#033443" }}>
+            <h1 className="text-lg font-semibold">
+              <i className="bi bi-building me-2"></i>Company Registration
+            </h1>
+          </div>
 
-        <FormField label="Company Name" error={errors.company_name}>
-          <Input
-            registration={register("company_name", { required: "Company name is required" })}
-            placeholder="Acme Corporation"
-            error={errors.company_name}
-          />
-        </FormField>
+          {/* Form */}
+          <div className="p-6 lg:p-10">
+            <form>
+              {/* Personal Information */}
+              <h2 className="mb-3 border-b border-gray-200 pb-2 text-base font-semibold text-gray-900">Personal Information</h2>
+              <div className="grid grid-cols-1 gap-x-4 md:grid-cols-2">
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyFirstName">First Name *</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyFirstName" type="text" required />
+                </div>
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyLastName">Last Name *</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyLastName" type="text" required />
+                </div>
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyEmail">Email Address *</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyEmail" type="email" required />
+                </div>
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyPhone">Phone Number</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyPhone" type="tel" />
+                </div>
+              </div>
 
-        <FormField label="Email" error={errors.email}>
-          <Input
-            type="email"
-            registration={register("email", {
-              required: "Email is required",
-              pattern: { value: /^\S+@\S+\.\S+$/, message: "Invalid email" },
-            })}
-            placeholder="contact@acme.com"
-            error={errors.email}
-          />
-        </FormField>
+              {/* Company Information */}
+              <h2 className="mb-3 mt-4 border-b border-gray-200 pb-2 text-base font-semibold text-gray-900">Company Information</h2>
+              <div className="grid grid-cols-1 gap-x-4 md:grid-cols-2">
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyName">Company Name *</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyName" type="text" required />
+                </div>
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="foundationYear">Foundation Year *</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="foundationYear" type="number" min={1800} max={2100} required />
+                </div>
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="industry">Industry</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="industry" type="text" />
+                </div>
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companySize">Company Size</label>
+                  <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companySize" defaultValue="">
+                    <option value="" disabled>Select size</option>
+                    <option>1-10 Employees</option>
+                    <option>11-50 Employees</option>
+                    <option>51-200 Employees</option>
+                    <option>201-500 Employees</option>
+                    <option>500+ Employees</option>
+                  </select>
+                </div>
+              </div>
+              <div className="mb-3">
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyWebsite">Website</label>
+                <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyWebsite" type="url" placeholder="https://example.com" />
+              </div>
+              <div className="mb-3">
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companySpecialization">Area of Specialization *</label>
+                <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companySpecialization" type="text" required />
+              </div>
+              <div className="mb-3">
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyDescription">Company Description *</label>
+                <textarea className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyDescription" rows={4} required></textarea>
+              </div>
 
-        <FormField label="Password" error={errors.password}>
-          <Input
-            type="password"
-            registration={register("password", {
-              required: "Password is required",
-              minLength: { value: 6, message: "At least 6 characters" },
-            })}
-            placeholder="Min. 6 characters"
-            error={errors.password}
-          />
-        </FormField>
+              {/* Address Information */}
+              <h2 className="mb-3 mt-4 border-b border-gray-200 pb-2 text-base font-semibold text-gray-900">Address Information</h2>
+              <div className="mb-3">
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyAddress">Full Address *</label>
+                <textarea className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyAddress" rows={3} required></textarea>
+              </div>
+              <div className="grid grid-cols-1 gap-x-4 md:grid-cols-3">
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyCity">City *</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyCity" type="text" required />
+                </div>
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyState">State/Province</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyState" type="text" />
+                </div>
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyPostalCode">Postal Code</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyPostalCode" type="text" />
+                </div>
+              </div>
+              <div className="mb-3">
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="headquartersLocation">Headquarters Description *</label>
+                <textarea className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="headquartersLocation" rows={3} required></textarea>
+              </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <FormField label="Industry" error={errors.industry}>
-            <Select
-              options={INDUSTRIES}
-              placeholder="Select industry"
-              registration={register("industry", { required: "Industry is required" })}
-              error={errors.industry}
-            />
-          </FormField>
+              {/* Location */}
+              <h2 className="mb-3 mt-4 border-b border-gray-200 pb-2 text-base font-semibold text-gray-900">Location</h2>
+              <div className="grid grid-cols-1 gap-x-4 md:grid-cols-2">
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyContinent">Continent *</label>
+                  <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyContinent" required defaultValue="">
+                    <option value="" disabled>Select continent</option>
+                    <option>Africa</option>
+                    <option>Asia</option>
+                    <option>Europe</option>
+                    <option>North America</option>
+                    <option>South America</option>
+                    <option>Oceania</option>
+                  </select>
+                </div>
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyCountry">Country *</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyCountry" type="text" required />
+                </div>
+              </div>
 
-          <FormField label="Country" error={errors.country}>
-            <Select
-              options={COUNTRIES}
-              placeholder="Select country"
-              registration={register("country", { required: "Country is required" })}
-              error={errors.country}
-            />
-          </FormField>
+              {/* Membership */}
+              <h2 className="mb-3 mt-4 border-b border-gray-200 pb-2 text-base font-semibold text-gray-900">Membership</h2>
+              <div className="mb-3">
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyMembership">Membership Duration *</label>
+                <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyMembership" required defaultValue="">
+                  <option value="" disabled>Select duration</option>
+                  <option>1 Month</option>
+                  <option>3 Months</option>
+                  <option>6 Months</option>
+                  <option>12 Months</option>
+                </select>
+              </div>
+
+              {/* Account Security */}
+              <h2 className="mb-3 mt-4 border-b border-gray-200 pb-2 text-base font-semibold text-gray-900">Account Security</h2>
+              <div className="grid grid-cols-1 gap-x-4 md:grid-cols-2">
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyPassword">Password *</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyPassword" type="password" required />
+                </div>
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyConfirmPassword">Confirm Password *</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyConfirmPassword" type="password" required />
+                </div>
+              </div>
+
+              {/* Terms */}
+              <div className="mt-2 flex items-center gap-2">
+                <input className="h-4 w-4 rounded border-gray-300" type="checkbox" id="companyTerms" required />
+                <label className="text-sm text-gray-700" htmlFor="companyTerms">I agree to the terms and policies.</label>
+              </div>
+
+              {/* Buttons */}
+              <div className="mt-4 flex flex-wrap justify-end gap-2">
+                <Link href="/register" className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50">
+                  <i className="bi bi-arrow-left me-1"></i>Back
+                </Link>
+                <button type="submit" className="rounded-md px-4 py-2 text-sm font-medium text-white" style={{ backgroundColor: "#033443" }}>
+                  <i className="bi bi-check-circle me-1"></i>Create Company Account
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-
-        <FormField label="Website" error={errors.website}>
-          <Input
-            registration={register("website")}
-            placeholder="https://acme.com"
-            error={errors.website}
-          />
-        </FormField>
-
-        <FormField label="Number of Employees" error={errors.employee_count}>
-          <Select
-            options={[
-              { value: "1-10", label: "1-10" },
-              { value: "11-50", label: "11-50" },
-              { value: "51-200", label: "51-200" },
-              { value: "201-500", label: "201-500" },
-              { value: "500+", label: "500+" },
-            ]}
-            placeholder="Select range"
-            registration={register("employee_count")}
-            error={errors.employee_count}
-          />
-        </FormField>
-
-        <FormField label="Description" error={errors.description}>
-          <Textarea
-            registration={register("description")}
-            placeholder="Tell us about your company..."
-            error={errors.description}
-          />
-        </FormField>
-
-        <SubmitButton loading={isSubmitting}>Create Company Account</SubmitButton>
-      </form>
-    </AuthLayout>
+      </div>
+    </main>
   );
 }

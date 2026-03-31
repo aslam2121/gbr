@@ -1,229 +1,141 @@
 "use client";
 
-import { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
-import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
 import Link from "next/link";
-import axios from "axios";
-import { AuthLayout, SubmitButton, ErrorAlert } from "./AuthLayout";
-import { FormField, Input, Select, Textarea } from "./FormField";
-import { MultiSelect } from "./MultiSelect";
-
-const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
-
-const INVESTMENT_FOCUS = [
-  { value: "seed", label: "Seed Stage" },
-  { value: "series_a", label: "Series A" },
-  { value: "series_b", label: "Series B+" },
-  { value: "growth", label: "Growth Equity" },
-  { value: "late_stage", label: "Late Stage" },
-  { value: "debt", label: "Debt Financing" },
-];
-
-const SECTORS = [
-  { value: "saas", label: "SaaS" },
-  { value: "fintech", label: "Fintech" },
-  { value: "healthtech", label: "Healthtech" },
-  { value: "cleantech", label: "Cleantech" },
-  { value: "edtech", label: "Edtech" },
-  { value: "ecommerce", label: "E-commerce" },
-  { value: "ai_ml", label: "AI / ML" },
-  { value: "biotech", label: "Biotech" },
-  { value: "hardware", label: "Hardware" },
-  { value: "other", label: "Other" },
-];
-
-const COUNTRIES = [
-  { value: "US", label: "United States" },
-  { value: "GB", label: "United Kingdom" },
-  { value: "DE", label: "Germany" },
-  { value: "FR", label: "France" },
-  { value: "CA", label: "Canada" },
-  { value: "AU", label: "Australia" },
-  { value: "IN", label: "India" },
-  { value: "SG", label: "Singapore" },
-  { value: "AE", label: "UAE" },
-  { value: "OTHER", label: "Other" },
-];
-
-interface InvestorFormData {
-  full_name: string;
-  email: string;
-  password: string;
-  investment_focus: string;
-  sectors: string[];
-  portfolio_size: string;
-  country: string;
-  linkedin_url: string;
-  bio: string;
-}
 
 export function InvestorRegisterForm() {
-  const router = useRouter();
-  const [error, setError] = useState("");
-  const {
-    register,
-    handleSubmit,
-    control,
-    formState: { errors, isSubmitting },
-  } = useForm<InvestorFormData>({
-    defaultValues: { sectors: [] },
-  });
-
-  const onSubmit = async (data: InvestorFormData) => {
-    setError("");
-    try {
-      await axios.post(`${STRAPI_URL}/api/auth/local/register`, {
-        username: data.email.split("@")[0] + "_" + Date.now(),
-        email: data.email,
-        password: data.password,
-        user_type: "investor",
-        display_name: data.full_name,
-        investor_name: data.full_name,
-      });
-
-      const result = await signIn("credentials", {
-        redirect: false,
-        identifier: data.email,
-        password: data.password,
-      });
-
-      if (result?.error) {
-        setError("Account created but login failed. Please try logging in.");
-        return;
-      }
-
-      router.push("/dashboard");
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        setError(
-          err.response?.data?.error?.message || "Registration failed. Please try again."
-        );
-      } else {
-        setError("Registration failed. Please try again.");
-      }
-    }
-  };
-
   return (
-    <AuthLayout
-      title="Register as an Investor"
-      subtitle="Discover companies and connect with founders"
-      footer={
-        <>
-          Already have an account?{" "}
-          <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
-            Sign in
-          </Link>
-        </>
-      }
-    >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        {error && <ErrorAlert message={error} />}
+    <main className="bg-gray-50 py-10">
+      <div className="mx-auto max-w-4xl px-4">
+        <div className="overflow-hidden rounded-lg border-0 bg-white shadow-sm">
+          {/* Header */}
+          <div className="bg-emerald-600 px-6 py-3 text-white">
+            <h1 className="text-lg font-semibold">
+              <i className="bi bi-graph-up-arrow me-2"></i>Investor Registration
+            </h1>
+          </div>
 
-        <FormField label="Full Name" error={errors.full_name}>
-          <Input
-            registration={register("full_name", { required: "Name is required" })}
-            placeholder="Jane Smith"
-            error={errors.full_name}
-          />
-        </FormField>
+          {/* Form */}
+          <div className="p-6 lg:p-10">
+            <form>
+              {/* Personal Information */}
+              <h2 className="mb-3 border-b border-gray-200 pb-2 text-base font-semibold text-gray-900">Personal Information</h2>
+              <div className="grid grid-cols-1 gap-x-4 md:grid-cols-2">
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorFirstName">First Name *</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investorFirstName" type="text" required />
+                </div>
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorLastName">Last Name *</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investorLastName" type="text" required />
+                </div>
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorEmail">Email Address *</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investorEmail" type="email" required />
+                </div>
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorPhone">Phone Number</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investorPhone" type="tel" />
+                </div>
+              </div>
 
-        <FormField label="Email" error={errors.email}>
-          <Input
-            type="email"
-            registration={register("email", {
-              required: "Email is required",
-              pattern: { value: /^\S+@\S+\.\S+$/, message: "Invalid email" },
-            })}
-            placeholder="jane@ventures.com"
-            error={errors.email}
-          />
-        </FormField>
+              {/* Investment Information */}
+              <h2 className="mb-3 mt-4 border-b border-gray-200 pb-2 text-base font-semibold text-gray-900">Investment Information</h2>
+              <div className="grid grid-cols-1 gap-x-4 md:grid-cols-2">
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorCompanyName">Investment Company Name *</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investorCompanyName" type="text" required />
+                </div>
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorPersonName">Your Full Name *</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investorPersonName" type="text" required />
+                </div>
+              </div>
+              <div className="mb-3">
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorType">Type of Investor *</label>
+                <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investorType" required defaultValue="">
+                  <option value="" disabled>Select investor type</option>
+                  <option>Angel Investor</option>
+                  <option>Venture Capital</option>
+                  <option>Private Equity</option>
+                  <option>Institutional Investor</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div className="mb-3">
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorCriteria">Investment Criteria &amp; Eligibility Requirements *</label>
+                <textarea className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investorCriteria" rows={4} required></textarea>
+              </div>
+              <div className="mb-3">
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorDescription">Company Description *</label>
+                <textarea className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investorDescription" rows={4} required></textarea>
+              </div>
 
-        <FormField label="Password" error={errors.password}>
-          <Input
-            type="password"
-            registration={register("password", {
-              required: "Password is required",
-              minLength: { value: 6, message: "At least 6 characters" },
-            })}
-            placeholder="Min. 6 characters"
-            error={errors.password}
-          />
-        </FormField>
+              {/* Location */}
+              <h2 className="mb-3 mt-4 border-b border-gray-200 pb-2 text-base font-semibold text-gray-900">Location</h2>
+              <div className="grid grid-cols-1 gap-x-4 md:grid-cols-2">
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorContinent">Continent *</label>
+                  <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investorContinent" required defaultValue="">
+                    <option value="" disabled>Select continent</option>
+                    <option>Africa</option>
+                    <option>Asia</option>
+                    <option>Europe</option>
+                    <option>North America</option>
+                    <option>South America</option>
+                    <option>Oceania</option>
+                  </select>
+                </div>
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorCountry">Country *</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investorCountry" type="text" required />
+                </div>
+              </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <FormField label="Investment Focus" error={errors.investment_focus}>
-            <Select
-              options={INVESTMENT_FOCUS}
-              placeholder="Select focus"
-              registration={register("investment_focus", { required: "Required" })}
-              error={errors.investment_focus}
-            />
-          </FormField>
+              {/* Membership */}
+              <h2 className="mb-3 mt-4 border-b border-gray-200 pb-2 text-base font-semibold text-gray-900">Membership</h2>
+              <div className="mb-3">
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorMembership">Membership Duration *</label>
+                <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investorMembership" required defaultValue="">
+                  <option value="" disabled>Select duration</option>
+                  <option>1 Month</option>
+                  <option>3 Months</option>
+                  <option>6 Months</option>
+                  <option>12 Months</option>
+                </select>
+              </div>
 
-          <FormField label="Country" error={errors.country}>
-            <Select
-              options={COUNTRIES}
-              placeholder="Select country"
-              registration={register("country", { required: "Required" })}
-              error={errors.country}
-            />
-          </FormField>
+              {/* Account Security */}
+              <h2 className="mb-3 mt-4 border-b border-gray-200 pb-2 text-base font-semibold text-gray-900">Account Security</h2>
+              <div className="grid grid-cols-1 gap-x-4 md:grid-cols-2">
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorPassword">Password *</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investorPassword" type="password" required />
+                </div>
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorConfirmPassword">Confirm Password *</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investorConfirmPassword" type="password" required />
+                </div>
+              </div>
+
+              {/* Terms */}
+              <div className="mt-2 flex items-center gap-2">
+                <input className="h-4 w-4 rounded border-gray-300" type="checkbox" id="investorTerms" required />
+                <label className="text-sm text-gray-700" htmlFor="investorTerms">I agree to the terms and policies.</label>
+              </div>
+
+              {/* Buttons */}
+              <div className="mt-4 flex flex-wrap justify-end gap-2">
+                <Link href="/register" className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50">
+                  <i className="bi bi-arrow-left me-1"></i>Back
+                </Link>
+                <button type="submit" className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700">
+                  <i className="bi bi-check-circle me-1"></i>Create Investor Account
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-
-        <FormField label="Sectors of Interest" error={errors.sectors}>
-          <Controller
-            name="sectors"
-            control={control}
-            rules={{ validate: (v) => v.length > 0 || "Select at least one sector" }}
-            render={({ field }) => (
-              <MultiSelect
-                options={SECTORS}
-                value={field.value}
-                onChange={field.onChange}
-                placeholder="Select sectors..."
-                error={!!errors.sectors}
-              />
-            )}
-          />
-        </FormField>
-
-        <FormField label="Portfolio Size" error={errors.portfolio_size}>
-          <Select
-            options={[
-              { value: "under_1m", label: "Under $1M" },
-              { value: "1m_10m", label: "$1M - $10M" },
-              { value: "10m_50m", label: "$10M - $50M" },
-              { value: "50m_100m", label: "$50M - $100M" },
-              { value: "over_100m", label: "$100M+" },
-            ]}
-            placeholder="Select range"
-            registration={register("portfolio_size")}
-            error={errors.portfolio_size}
-          />
-        </FormField>
-
-        <FormField label="LinkedIn URL" error={errors.linkedin_url}>
-          <Input
-            registration={register("linkedin_url")}
-            placeholder="https://linkedin.com/in/janesmith"
-            error={errors.linkedin_url}
-          />
-        </FormField>
-
-        <FormField label="Bio" error={errors.bio}>
-          <Textarea
-            registration={register("bio")}
-            placeholder="Tell us about your investment philosophy..."
-            error={errors.bio}
-          />
-        </FormField>
-
-        <SubmitButton loading={isSubmitting}>Create Investor Account</SubmitButton>
-      </form>
-    </AuthLayout>
+      </div>
+    </main>
   );
 }
