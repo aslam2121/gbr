@@ -1,1 +1,19 @@
 @import "tailwindcss";
+
+/* GBR Brand Colors */
+@theme {
+  --color-gbr-primary: #033443;
+  --color-gbr-secondary: #0a8cb7;
+  --color-gbr-accent: #0083ae;
+  --color-gbr-dark: #043443;
+  --color-gbr-tan: #f9efe3;
+  --color-gbr-cyan: #e7f9fc;
+  --color-gbr-focus: #39c0ed;
+}
+
+/* Poppins font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif;
+}

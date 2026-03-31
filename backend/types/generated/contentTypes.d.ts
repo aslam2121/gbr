@@ -430,6 +430,58 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiCallRoomCallRoom extends Struct.CollectionTypeSchema {
+  collectionName: 'call_rooms';
+  info: {
+    description: 'Video/voice call room powered by Daily.co';
+    displayName: 'Call Room';
+    pluralName: 'call-rooms';
+    singularName: 'call-room';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    call_type: Schema.Attribute.Enumeration<['video', 'voice']> &
+      Schema.Attribute.DefaultTo<'video'>;
+    created_by_user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    daily_room_url: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }>;
+    ended_at: Schema.Attribute.DateTime;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::call-room.call-room'
+    > &
+      Schema.Attribute.Private;
+    participants: Schema.Attribute.Relation<
+      'manyToMany',
+      'plugin::users-permissions.user'
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    room_name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    started_at: Schema.Attribute.DateTime;
+    status: Schema.Attribute.Enumeration<['waiting', 'active', 'ended']> &
+      Schema.Attribute.DefaultTo<'waiting'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiCompanyCompany extends Struct.CollectionTypeSchema {
   collectionName: 'companies';
   info: {
@@ -442,33 +494,57 @@ export interface ApiCompanyCompany extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    description: Schema.Attribute.Text;
-    industry: Schema.Attribute.String &
+    continent: Schema.Attribute.Enumeration<
+      ['asia', 'europe', 'north_america', 'south_america', 'africa', 'oceania']
+    >;
+    country: Schema.Attribute.String &
+      Schema.Attribute.Required &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 100;
       }>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.RichText;
+    employee_count: Schema.Attribute.Enumeration<
+      ['s_1_10', 's_11_50', 's_51_200', 's_201_500', 's_500_plus']
+    >;
+    founded_year: Schema.Attribute.Integer;
+    industry: Schema.Attribute.Enumeration<
+      [
+        'tech',
+        'finance',
+        'healthcare',
+        'energy',
+        'manufacturing',
+        'logistics',
+        'education',
+        'other',
+      ]
+    >;
+    latitude: Schema.Attribute.Float;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::company.company'
     > &
       Schema.Attribute.Private;
+    logo: Schema.Attribute.Media<'images'>;
+    longitude: Schema.Attribute.Float;
     name: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
+    owner: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
     publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.UID<'name'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    user: Schema.Attribute.Relation<
-      'oneToOne',
-      'plugin::users-permissions.user'
-    >;
     website: Schema.Attribute.String &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 255;
@@ -488,11 +564,9 @@ export interface ApiExpertExpert extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
-    bio: Schema.Attribute.Text;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    hourly_rate: Schema.Attribute.Decimal;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -558,6 +632,58 @@ export interface ApiInvestorInvestor extends Struct.CollectionTypeSchema {
       'oneToOne',
       'plugin::users-permissions.user'
     >;
+  };
+}
+
+export interface ApiSubscriptionPlanSubscriptionPlan
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'subscription_plans';
+  info: {
+    description: 'Subscription plan with Stripe integration';
+    displayName: 'Subscription Plan';
+    pluralName: 'subscription-plans';
+    singularName: 'subscription-plan';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    call_minutes: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    directory_listings: Schema.Attribute.Integer &
+      Schema.Attribute.DefaultTo<1>;
+    features: Schema.Attribute.JSON;
+    is_popular: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::subscription-plan.subscription-plan'
+    > &
+      Schema.Attribute.Private;
+    max_contacts: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<10>;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    price_monthly: Schema.Attribute.Decimal & Schema.Attribute.Required;
+    price_yearly: Schema.Attribute.Decimal;
+    publishedAt: Schema.Attribute.DateTime;
+    stripe_price_id_monthly: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    stripe_price_id_yearly: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    user_type: Schema.Attribute.Enumeration<['company', 'investor', 'expert']> &
+      Schema.Attribute.Required;
   };
 }
 
@@ -1085,9 +1211,11 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::call-room.call-room': ApiCallRoomCallRoom;
       'api::company.company': ApiCompanyCompany;
       'api::expert.expert': ApiExpertExpert;
       'api::investor.investor': ApiInvestorInvestor;
+      'api::subscription-plan.subscription-plan': ApiSubscriptionPlanSubscriptionPlan;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

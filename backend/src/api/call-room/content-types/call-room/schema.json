@@ -1,0 +1,52 @@
+{
+  "kind": "collectionType",
+  "collectionName": "call_rooms",
+  "info": {
+    "singularName": "call-room",
+    "pluralName": "call-rooms",
+    "displayName": "Call Room",
+    "description": "Video/voice call room powered by Daily.co"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "room_name": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "maxLength": 255
+    },
+    "daily_room_url": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "created_by_user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "participants": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::users-permissions.user"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["waiting", "active", "ended"],
+      "default": "waiting"
+    },
+    "started_at": {
+      "type": "datetime"
+    },
+    "ended_at": {
+      "type": "datetime"
+    },
+    "call_type": {
+      "type": "enumeration",
+      "enum": ["video", "voice"],
+      "default": "video"
+    }
+  }
+}

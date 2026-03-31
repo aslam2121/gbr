@@ -140,6 +140,9 @@ module.exports = (plugin) => {
     switch (user_type) {
       case 'company':
         profileData.name = company_name;
+        profileData.country = ctx.request.body.country || 'Other';
+        profileData.owner = user.id;
+        delete profileData.user;
         await strapi.documents('api::company.company').create({ data: profileData });
         break;
       case 'investor':

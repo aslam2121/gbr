@@ -10,26 +10,58 @@
   "options": {
     "draftAndPublish": false
   },
+  "pluginOptions": {},
   "attributes": {
     "name": {
       "type": "string",
       "required": true,
       "maxLength": 255
     },
+    "slug": {
+      "type": "uid",
+      "targetField": "name"
+    },
     "description": {
-      "type": "text"
+      "type": "richtext"
+    },
+    "logo": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
     },
     "industry": {
+      "type": "enumeration",
+      "enum": ["tech", "finance", "healthcare", "energy", "manufacturing", "logistics", "education", "other"]
+    },
+    "country": {
       "type": "string",
+      "required": true,
       "maxLength": 100
+    },
+    "continent": {
+      "type": "enumeration",
+      "enum": ["asia", "europe", "north_america", "south_america", "africa", "oceania"]
+    },
+    "latitude": {
+      "type": "float"
+    },
+    "longitude": {
+      "type": "float"
     },
     "website": {
       "type": "string",
       "maxLength": 255
     },
-    "user": {
+    "founded_year": {
+      "type": "integer"
+    },
+    "employee_count": {
+      "type": "enumeration",
+      "enum": ["s_1_10", "s_11_50", "s_51_200", "s_201_500", "s_500_plus"]
+    },
+    "owner": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "manyToOne",
       "target": "plugin::users-permissions.user"
     }
   }

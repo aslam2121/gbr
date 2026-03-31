@@ -10,6 +10,7 @@
   "options": {
     "draftAndPublish": false
   },
+  "pluginOptions": {},
   "attributes": {
     "name": {
       "type": "string",
@@ -19,12 +20,6 @@
     "specialty": {
       "type": "string",
       "maxLength": 255
-    },
-    "hourly_rate": {
-      "type": "decimal"
-    },
-    "bio": {
-      "type": "text"
     },
     "user": {
       "type": "relation",

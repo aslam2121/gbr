@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "@/lib/auth";
+import { DashboardLayout } from "@/modules/dashboard";
 
-export default async function DashboardLayout({
+export default async function DashboardRootLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -12,5 +13,5 @@ export default async function DashboardLayout({
     redirect("/login");
   }
 
-  return <>{children}</>;
+  return <DashboardLayout>{children}</DashboardLayout>;
 }
