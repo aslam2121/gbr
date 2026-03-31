@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { COUNTRIES, CONTINENTS_WITH_ANTARCTICA } from "@/lib/countries";
 
 export function InvestorRegisterForm() {
   return (
@@ -21,19 +22,19 @@ export function InvestorRegisterForm() {
               <h2 className="mb-3 border-b border-gray-200 pb-2 text-base font-semibold text-gray-900">Personal Information</h2>
               <div className="grid grid-cols-1 gap-x-4 md:grid-cols-2">
                 <div className="mb-3">
-                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorFirstName">First Name *</label>
-                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investorFirstName" type="text" required />
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorName">Name *</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investorName" type="text" required />
                 </div>
                 <div className="mb-3">
-                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorLastName">Last Name *</label>
-                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investorLastName" type="text" required />
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorSurname">Surname</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investorSurname" type="text" />
                 </div>
                 <div className="mb-3">
                   <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorEmail">Email Address *</label>
                   <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investorEmail" type="email" required />
                 </div>
                 <div className="mb-3">
-                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorPhone">Phone Number</label>
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorPhone">Telephone / Mobile</label>
                   <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investorPhone" type="tel" />
                 </div>
               </div>
@@ -42,52 +43,76 @@ export function InvestorRegisterForm() {
               <h2 className="mb-3 mt-4 border-b border-gray-200 pb-2 text-base font-semibold text-gray-900">Investment Information</h2>
               <div className="grid grid-cols-1 gap-x-4 md:grid-cols-2">
                 <div className="mb-3">
-                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorCompanyName">Investment Company Name *</label>
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorCompanyName">Name of the Company *</label>
                   <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investorCompanyName" type="text" required />
                 </div>
                 <div className="mb-3">
-                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorPersonName">Your Full Name *</label>
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorPersonName">Name of the Person *</label>
                   <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investorPersonName" type="text" required />
+                </div>
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="foundationYear">Foundation Year</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="foundationYear" type="number" min={1800} max={2100} />
                 </div>
               </div>
               <div className="mb-3">
                 <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorType">Type of Investor *</label>
                 <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investorType" required defaultValue="">
                   <option value="" disabled>Select investor type</option>
-                  <option>Angel Investor</option>
-                  <option>Venture Capital</option>
-                  <option>Private Equity</option>
-                  <option>Institutional Investor</option>
-                  <option>Other</option>
+                  <option>Private equity firms</option>
+                  <option>Venture capital firms</option>
+                  <option>Private investors</option>
+                  <option>Angel investors</option>
+                  <option>Business lenders</option>
                 </select>
               </div>
               <div className="mb-3">
-                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorCriteria">Investment Criteria &amp; Eligibility Requirements *</label>
-                <textarea className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investorCriteria" rows={4} required></textarea>
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investmentPolicies">Investment Policies</label>
+                <textarea className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investmentPolicies" rows={4}></textarea>
               </div>
               <div className="mb-3">
-                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorDescription">Company Description *</label>
-                <textarea className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investorDescription" rows={4} required></textarea>
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investmentPoliciesFile">Investment Policies File(s)</label>
+                <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investmentPoliciesFile" type="file" multiple />
+              </div>
+              <div className="mb-3">
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="eligibilityCriteria">Eligibility Criteria</label>
+                <textarea className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="eligibilityCriteria" rows={4}></textarea>
+              </div>
+              <div className="mb-3">
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="shortDescriptionCompany">Short Description of Company *</label>
+                <textarea className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="shortDescriptionCompany" rows={4} required></textarea>
               </div>
 
               {/* Location */}
               <h2 className="mb-3 mt-4 border-b border-gray-200 pb-2 text-base font-semibold text-gray-900">Location</h2>
               <div className="grid grid-cols-1 gap-x-4 md:grid-cols-2">
                 <div className="mb-3">
-                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorContinent">Continent *</label>
-                  <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investorContinent" required defaultValue="">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorContinent">Continent</label>
+                  <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investorContinent" defaultValue="">
                     <option value="" disabled>Select continent</option>
-                    <option>Africa</option>
-                    <option>Asia</option>
-                    <option>Europe</option>
-                    <option>North America</option>
-                    <option>South America</option>
-                    <option>Oceania</option>
+                    {CONTINENTS_WITH_ANTARCTICA.map((c) => (
+                      <option key={c}>{c}</option>
+                    ))}
                   </select>
                 </div>
                 <div className="mb-3">
                   <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorCountry">Country *</label>
-                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investorCountry" type="text" required />
+                  <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investorCountry" required defaultValue="">
+                    <option value="" disabled>Select country</option>
+                    {COUNTRIES.map((c) => (
+                      <option key={c}>{c}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 gap-x-4 md:grid-cols-2">
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="locationOfHeadquarters">Location of Headquarters</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="locationOfHeadquarters" type="text" />
+                </div>
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="locationOfBranches">Location of Branches</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="locationOfBranches" type="text" />
                 </div>
               </div>
 
@@ -97,10 +122,9 @@ export function InvestorRegisterForm() {
                 <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="investorMembership">Membership Duration *</label>
                 <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="investorMembership" required defaultValue="">
                   <option value="" disabled>Select duration</option>
-                  <option>1 Month</option>
-                  <option>3 Months</option>
-                  <option>6 Months</option>
-                  <option>12 Months</option>
+                  <option value="year 1">1 Year</option>
+                  <option value="years 2">2 Years</option>
+                  <option value="years 3">3 Years</option>
                 </select>
               </div>
 

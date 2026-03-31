@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { COUNTRIES, CONTINENTS_WITH_ANTARCTICA } from "@/lib/countries";
 
 export function ExpertRegisterForm() {
   const [showCustomFee, setShowCustomFee] = useState(false);
@@ -24,24 +25,20 @@ export function ExpertRegisterForm() {
               <h2 className="mb-3 border-b border-gray-200 pb-2 text-base font-semibold text-gray-900">Personal Information</h2>
               <div className="grid grid-cols-1 gap-x-4 md:grid-cols-2">
                 <div className="mb-3">
-                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertFirstName">First Name *</label>
-                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertFirstName" type="text" required />
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertName">Name *</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertName" type="text" required />
                 </div>
                 <div className="mb-3">
-                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertLastName">Last Name *</label>
-                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertLastName" type="text" required />
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertSurname">Surname</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertSurname" type="text" />
                 </div>
                 <div className="mb-3">
                   <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertEmail">Email Address *</label>
                   <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertEmail" type="email" required />
                 </div>
                 <div className="mb-3">
-                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertPhone">Phone Number</label>
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertPhone">Telephone / Mobile</label>
                   <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertPhone" type="tel" />
-                </div>
-                <div className="mb-3">
-                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertProfessionalName">Professional Name *</label>
-                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertProfessionalName" type="text" required />
                 </div>
                 <div className="mb-3">
                   <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertDob">Date of Birth *</label>
@@ -53,8 +50,13 @@ export function ExpertRegisterForm() {
               <h2 className="mb-3 mt-4 border-b border-gray-200 pb-2 text-base font-semibold text-gray-900">Expertise Information</h2>
               <div className="grid grid-cols-1 gap-x-4 md:grid-cols-2">
                 <div className="mb-3">
-                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertField">Field of Expertise *</label>
-                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertField" type="text" required />
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="fieldOfExpertise">Field of Expertise *</label>
+                  <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="fieldOfExpertise" required defaultValue="">
+                    <option value="" disabled>Select field</option>
+                    <option>Economics</option>
+                    <option>Politics</option>
+                    <option>Law</option>
+                  </select>
                 </div>
                 <div className="mb-3">
                   <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertExperienceYears">Years of Experience *</label>
@@ -62,12 +64,22 @@ export function ExpertRegisterForm() {
                 </div>
               </div>
               <div className="mb-3">
-                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertSpecialisation">Specialization *</label>
-                <textarea className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertSpecialisation" rows={3} required></textarea>
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertSpecialisation">Specialisation on Selected Field</label>
+                <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertSpecialisation" type="text" />
               </div>
               <div className="mb-3">
-                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertWorkDescription">Work Experience Description *</label>
-                <textarea className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertWorkDescription" rows={4} required></textarea>
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="briefDescription">Brief Description *</label>
+                <textarea className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="briefDescription" rows={4} required></textarea>
+              </div>
+              <div className="mb-3">
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="anyOtherDetails">Any Other Details</label>
+                <textarea className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="anyOtherDetails" rows={3}></textarea>
+              </div>
+
+              {/* CV / Biography Upload */}
+              <div className="mb-3">
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="cvBiography">CV / Biography (files or images)</label>
+                <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="cvBiography" type="file" multiple accept="image/*,.pdf,.doc,.docx" />
               </div>
 
               {/* Consultation Rates */}
@@ -92,7 +104,7 @@ export function ExpertRegisterForm() {
                 </div>
                 {showCustomFee && (
                   <div className="mb-3">
-                    <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertCustomFee">Custom Rate</label>
+                    <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertCustomFee">Custom Rate ($)</label>
                     <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertCustomFee" type="number" min={1} placeholder="Enter custom fee" required />
                   </div>
                 )}
@@ -102,20 +114,22 @@ export function ExpertRegisterForm() {
               <h2 className="mb-3 mt-4 border-b border-gray-200 pb-2 text-base font-semibold text-gray-900">Location</h2>
               <div className="grid grid-cols-1 gap-x-4 md:grid-cols-2">
                 <div className="mb-3">
-                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertContinent">Continent *</label>
-                  <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertContinent" required defaultValue="">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertContinent">Continent</label>
+                  <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertContinent" defaultValue="">
                     <option value="" disabled>Select continent</option>
-                    <option>Africa</option>
-                    <option>Asia</option>
-                    <option>Europe</option>
-                    <option>North America</option>
-                    <option>South America</option>
-                    <option>Oceania</option>
+                    {CONTINENTS_WITH_ANTARCTICA.map((c) => (
+                      <option key={c}>{c}</option>
+                    ))}
                   </select>
                 </div>
                 <div className="mb-3">
                   <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertCountry">Country *</label>
-                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertCountry" type="text" required />
+                  <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertCountry" required defaultValue="">
+                    <option value="" disabled>Select country</option>
+                    {COUNTRIES.map((c) => (
+                      <option key={c}>{c}</option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
@@ -125,10 +139,7 @@ export function ExpertRegisterForm() {
                 <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="expertMembership">Membership Duration *</label>
                 <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="expertMembership" required defaultValue="">
                   <option value="" disabled>Select duration</option>
-                  <option>1 Month</option>
-                  <option>3 Months</option>
-                  <option>6 Months</option>
-                  <option>12 Months</option>
+                  <option value="year 1 ">1 Year</option>
                 </select>
               </div>
 

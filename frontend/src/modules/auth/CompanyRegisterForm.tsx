@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { COUNTRIES, CONTINENTS } from "@/lib/countries";
 
 export function CompanyRegisterForm() {
   return (
@@ -21,19 +22,15 @@ export function CompanyRegisterForm() {
               <h2 className="mb-3 border-b border-gray-200 pb-2 text-base font-semibold text-gray-900">Personal Information</h2>
               <div className="grid grid-cols-1 gap-x-4 md:grid-cols-2">
                 <div className="mb-3">
-                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyFirstName">First Name *</label>
-                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyFirstName" type="text" required />
-                </div>
-                <div className="mb-3">
-                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyLastName">Last Name *</label>
-                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyLastName" type="text" required />
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyPersonName">Name of the Person *</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyPersonName" type="text" required />
                 </div>
                 <div className="mb-3">
                   <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyEmail">Email Address *</label>
                   <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyEmail" type="email" required />
                 </div>
                 <div className="mb-3">
-                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyPhone">Phone Number</label>
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyPhone">Telephone / Mobile</label>
                   <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyPhone" type="tel" />
                 </div>
               </div>
@@ -42,26 +39,36 @@ export function CompanyRegisterForm() {
               <h2 className="mb-3 mt-4 border-b border-gray-200 pb-2 text-base font-semibold text-gray-900">Company Information</h2>
               <div className="grid grid-cols-1 gap-x-4 md:grid-cols-2">
                 <div className="mb-3">
-                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyName">Company Name *</label>
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyName">Name of the Company *</label>
                   <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyName" type="text" required />
                 </div>
                 <div className="mb-3">
-                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="foundationYear">Foundation Year *</label>
-                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="foundationYear" type="number" min={1800} max={2100} required />
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="foundationYear">Foundation Year</label>
+                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="foundationYear" type="number" min={1800} max={2100} />
                 </div>
                 <div className="mb-3">
                   <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="industry">Industry</label>
-                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="industry" type="text" />
+                  <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="industry" defaultValue="">
+                    <option value="" disabled>Select industry</option>
+                    <option value="tech">Technology</option>
+                    <option value="finance">Finance</option>
+                    <option value="healthcare">Healthcare</option>
+                    <option value="energy">Energy</option>
+                    <option value="manufacturing">Manufacturing</option>
+                    <option value="logistics">Logistics</option>
+                    <option value="education">Education</option>
+                    <option value="other">Other</option>
+                  </select>
                 </div>
                 <div className="mb-3">
-                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companySize">Company Size</label>
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companySize">Employee Count</label>
                   <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companySize" defaultValue="">
                     <option value="" disabled>Select size</option>
-                    <option>1-10 Employees</option>
-                    <option>11-50 Employees</option>
-                    <option>51-200 Employees</option>
-                    <option>201-500 Employees</option>
-                    <option>500+ Employees</option>
+                    <option value="s_1_10">1-10 Employees</option>
+                    <option value="s_11_50">11-50 Employees</option>
+                    <option value="s_51_200">51-200 Employees</option>
+                    <option value="s_201_500">201-500 Employees</option>
+                    <option value="s_500_plus">500+ Employees</option>
                   </select>
                 </div>
               </div>
@@ -70,37 +77,50 @@ export function CompanyRegisterForm() {
                 <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyWebsite" type="url" placeholder="https://example.com" />
               </div>
               <div className="mb-3">
-                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companySpecialization">Area of Specialization *</label>
-                <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companySpecialization" type="text" required />
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="areaOfSpecification">Area of Specification *</label>
+                <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="areaOfSpecification" required defaultValue="">
+                  <option value="" disabled>Select area</option>
+                  <option>Health</option>
+                  <option>Financial services</option>
+                  <option>IT</option>
+                  <option>Consumer products and services</option>
+                  <option>Logistics and Transportation</option>
+                  <option>Business products and services</option>
+                  <option>Construction and real estate</option>
+                  <option>Trading</option>
+                  <option>Manufacturing</option>
+                  <option>Advertising and marketing</option>
+                  <option>Agriculture</option>
+                </select>
               </div>
               <div className="mb-3">
-                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyDescription">Company Description *</label>
-                <textarea className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyDescription" rows={4} required></textarea>
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="shortDescription">Short Description *</label>
+                <textarea className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="shortDescription" rows={4} required></textarea>
+              </div>
+              <div className="mb-3">
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyDescription">Full Description</label>
+                <textarea className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyDescription" rows={4}></textarea>
               </div>
 
-              {/* Address Information */}
-              <h2 className="mb-3 mt-4 border-b border-gray-200 pb-2 text-base font-semibold text-gray-900">Address Information</h2>
+              {/* Logo Upload */}
               <div className="mb-3">
-                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyAddress">Full Address *</label>
-                <textarea className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyAddress" rows={3} required></textarea>
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyLogo">Company Logo</label>
+                <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyLogo" type="file" accept="image/*" />
               </div>
-              <div className="grid grid-cols-1 gap-x-4 md:grid-cols-3">
-                <div className="mb-3">
-                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyCity">City *</label>
-                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyCity" type="text" required />
-                </div>
-                <div className="mb-3">
-                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyState">State/Province</label>
-                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyState" type="text" />
-                </div>
-                <div className="mb-3">
-                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyPostalCode">Postal Code</label>
-                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyPostalCode" type="text" />
-                </div>
+
+              {/* Partnership & Revenue */}
+              <h2 className="mb-3 mt-4 border-b border-gray-200 pb-2 text-base font-semibold text-gray-900">Partnership &amp; Revenue</h2>
+              <div className="mb-3">
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="requirementsForPartnership">Requirements for Partnership</label>
+                <textarea className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="requirementsForPartnership" rows={3}></textarea>
               </div>
               <div className="mb-3">
-                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="headquartersLocation">Headquarters Description *</label>
-                <textarea className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="headquartersLocation" rows={3} required></textarea>
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="existingPartners">Existing Partners</label>
+                <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="existingPartners" type="text" />
+              </div>
+              <div className="mb-3">
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="annualRevenueData">Annual Revenue Data (files)</label>
+                <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="annualRevenueData" type="file" multiple />
               </div>
 
               {/* Location */}
@@ -110,17 +130,28 @@ export function CompanyRegisterForm() {
                   <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyContinent">Continent *</label>
                   <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyContinent" required defaultValue="">
                     <option value="" disabled>Select continent</option>
-                    <option>Africa</option>
-                    <option>Asia</option>
-                    <option>Europe</option>
-                    <option>North America</option>
-                    <option>South America</option>
-                    <option>Oceania</option>
+                    {CONTINENTS.map((c) => (
+                      <option key={c} value={c.toLowerCase().replace(" ", "_")}>{c}</option>
+                    ))}
                   </select>
                 </div>
                 <div className="mb-3">
                   <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyCountry">Country *</label>
-                  <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyCountry" type="text" required />
+                  <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyCountry" required defaultValue="">
+                    <option value="" disabled>Select country</option>
+                    {COUNTRIES.map((c) => (
+                      <option key={c}>{c}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="mb-3">
+                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="foundationCountry">Foundation Country</label>
+                  <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="foundationCountry" defaultValue="">
+                    <option value="" disabled>Select country</option>
+                    {COUNTRIES.map((c) => (
+                      <option key={c}>{c}</option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
@@ -130,10 +161,9 @@ export function CompanyRegisterForm() {
                 <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="companyMembership">Membership Duration *</label>
                 <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="companyMembership" required defaultValue="">
                   <option value="" disabled>Select duration</option>
-                  <option>1 Month</option>
-                  <option>3 Months</option>
-                  <option>6 Months</option>
-                  <option>12 Months</option>
+                  <option value="year 1">1 Year</option>
+                  <option value="years 2">2 Years</option>
+                  <option value="years 3">3 Years</option>
                 </select>
               </div>
 
