@@ -12,12 +12,12 @@ interface MapMarkerProps {
 }
 
 const CONTINENT_COLORS: Record<string, string> = {
-  north_america: "#3B82F6", // blue
-  south_america: "#10B981", // emerald
-  europe: "#8B5CF6",        // violet
-  africa: "#F59E0B",        // amber
-  asia: "#EF4444",          // red
-  oceania: "#06B6D4",       // cyan
+  "North America": "#3B82F6",
+  "South America": "#10B981",
+  "Europe": "#8B5CF6",
+  "Africa": "#F59E0B",
+  "Asia": "#EF4444",
+  "Oceania": "#06B6D4",
 };
 
 function getMarkerColor(continent: string | null): string {

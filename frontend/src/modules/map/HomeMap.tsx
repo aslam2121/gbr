@@ -6,12 +6,12 @@ import "leaflet/dist/leaflet.css";
 import { type Company } from "@/types/company";
 
 const CONTINENT_COLORS: Record<string, string> = {
-  north_america: "#3B82F6",
-  south_america: "#10B981",
-  europe: "#8B5CF6",
-  africa: "#F59E0B",
-  asia: "#EF4444",
-  oceania: "#06B6D4",
+  "North America": "#3B82F6",
+  "South America": "#10B981",
+  "Europe": "#8B5CF6",
+  "Africa": "#F59E0B",
+  "Asia": "#EF4444",
+  "Oceania": "#06B6D4",
 };
 
 interface HomeMapProps {
@@ -71,7 +71,7 @@ export default function HomeMap({ companies }: HomeMapProps) {
       L.marker([company.latitude, company.longitude], { icon })
         .bindPopup(
           `<div style="min-width:150px;">` +
-            `<strong><a href="/directory/${company.slug}" style="color:#0083ae;text-decoration:none;">${company.name}</a></strong>` +
+            `<strong><a href="/directory/${company.documentId}" style="color:#0083ae;text-decoration:none;">${company.name_of_the_company}</a></strong>` +
             `<br/><span style="font-size:12px;color:#666;">${company.country}</span>` +
             (company.industry
               ? `<br/><span style="font-size:11px;color:#999;text-transform:capitalize;">${company.industry}</span>`

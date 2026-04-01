@@ -63,12 +63,12 @@ function Legend({
   continentCounts: Record<string, number>;
 }) {
   const CONTINENT_COLORS: Record<string, string> = {
-    north_america: "#3B82F6",
-    south_america: "#10B981",
-    europe: "#8B5CF6",
-    africa: "#F59E0B",
-    asia: "#EF4444",
-    oceania: "#06B6D4",
+    "North America": "#3B82F6",
+    "South America": "#10B981",
+    "Europe": "#8B5CF6",
+    "Africa": "#F59E0B",
+    "Asia": "#EF4444",
+    "Oceania": "#06B6D4",
   };
 
   return (
@@ -120,7 +120,7 @@ export function WorldMap() {
       try {
         const res = await strapiGet<Company[]>("/companies", {
           "pagination[pageSize]": 100,
-          sort: "name:asc",
+          sort: "name_of_the_company:asc",
         });
         setCompanies(res.data ?? []);
       } catch (err) {
@@ -137,7 +137,7 @@ export function WorldMap() {
     const q = search.toLowerCase();
     return companies.filter(
       (c) =>
-        c.name.toLowerCase().includes(q) ||
+        c.name_of_the_company.toLowerCase().includes(q) ||
         c.country.toLowerCase().includes(q)
     );
   }, [companies, search]);

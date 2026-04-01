@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { useUnreadCount } from "@/hooks/useUnreadCount";
 
 const NAV_LINKS = [
   { label: "Home", href: "/", icon: "bi-house-door" },
@@ -29,6 +30,7 @@ export function Navbar() {
   const searchRef = useRef<HTMLDivElement>(null);
 
   const loggedIn = isLoggedIn();
+  const unreadCount = useUnreadCount(loggedIn);
 
   // Filter nav links based on auth state
   const visibleLinks = NAV_LINKS.filter((link) => {
@@ -68,8 +70,8 @@ export function Navbar() {
         </Link>
 
         {/* Desktop nav */}
-        <div className="hidden flex-1 overflow-x-auto xl:flex">
-          <ul className="flex items-center gap-0 text-uppercase">
+        <div className="hidden flex-1 justify-center overflow-x-auto xl:flex">
+          <ul className="flex items-center justify-center gap-0 text-uppercase">
             {visibleLinks.map((link) => (
               <li key={link.href}>
                 <Link
@@ -88,13 +90,22 @@ export function Navbar() {
             {loggedIn && (
               <>
                 <li>
-                  <button
-                    className="flex flex-col items-center gap-0.5 px-2 py-1.5 text-[10px] font-medium uppercase text-white transition-colors hover:bg-white/10"
-                    type="button"
+                  <Link
+                    href="/messaging"
+                    className={`relative flex flex-col items-center gap-0.5 px-2 py-1.5 text-[10px] font-medium uppercase text-white transition-colors ${
+                      isActive("/messaging") ? "bg-white/10" : "hover:bg-white/10"
+                    }`}
                   >
-                    <i className="bi bi-bell text-base" />
+                    <span className="relative">
+                      <i className="bi bi-bell text-base" />
+                      {unreadCount > 0 && (
+                        <span className="absolute -right-2 -top-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[9px] font-bold text-white">
+                          {unreadCount > 99 ? "99+" : unreadCount}
+                        </span>
+                      )}
+                    </span>
                     <span className="whitespace-nowrap leading-tight">Notifications</span>
-                  </button>
+                  </Link>
                 </li>
                 <li>
                   <Link
@@ -167,13 +178,22 @@ export function Navbar() {
               {loggedIn && (
                 <>
                   <li>
-                    <button
-                      className="flex w-full items-center gap-2 rounded px-3 py-2 text-sm uppercase text-white hover:bg-white/10"
-                      type="button"
+                    <Link
+                      href="/messaging"
+                      className={`flex w-full items-center gap-2 rounded px-3 py-2 text-sm uppercase text-white ${
+                        isActive("/messaging") ? "bg-white/10" : "hover:bg-white/10"
+                      }`}
                     >
-                      <i className="bi bi-bell" />
+                      <span className="relative">
+                        <i className="bi bi-bell" />
+                        {unreadCount > 0 && (
+                          <span className="absolute -right-2 -top-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[9px] font-bold text-white">
+                            {unreadCount > 99 ? "99+" : unreadCount}
+                          </span>
+                        )}
+                      </span>
                       Notifications
-                    </button>
+                    </Link>
                   </li>
                   <li>
                     <Link

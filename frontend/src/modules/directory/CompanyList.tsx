@@ -32,11 +32,11 @@ export function CompanyList({ initialData }: CompanyListProps) {
       const params: Record<string, unknown> = {
         "pagination[page]": page,
         "pagination[pageSize]": PAGE_SIZE,
-        sort: "name:asc",
+        sort: "name_of_the_company:asc",
       };
 
       if (search) {
-        params["filters[name][$containsi]"] = search;
+        params["filters[name_of_the_company][$containsi]"] = search;
       }
       if (industry) {
         params["filters[industry][$eq]"] = industry;

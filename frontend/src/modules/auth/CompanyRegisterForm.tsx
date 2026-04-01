@@ -7,6 +7,7 @@ import { signIn } from "next-auth/react";
 import Link from "next/link";
 import axios from "axios";
 import { COUNTRIES, CONTINENTS_WITH_ANTARCTICA } from "@/lib/countries";
+import { COUNTRY_COORDINATES } from "@/lib/country-coordinates";
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
 
@@ -60,6 +61,9 @@ export function CompanyRegisterForm() {
 
       const jwt = regRes.data.jwt;
 
+      // Auto-resolve coordinates from country
+      const coords = COUNTRY_COORDINATES[data.country];
+
       // Step 2: Create company profile with all fields
       await axios.post(
         `${STRAPI_URL}/api/companies`,
@@ -80,6 +84,8 @@ export function CompanyRegisterForm() {
             country: data.country,
             foundation_country: data.foundation_country || undefined,
             membership_duration: data.membership_duration,
+            latitude: coords?.lat,
+            longitude: coords?.lng,
           },
         },
         { headers: { Authorization: `Bearer ${jwt}` } }

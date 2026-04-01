@@ -12,13 +12,9 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "name": {
-      "type": "string",
-      "maxLength": 255,
-      "required": true
-    },
     "continent": {
       "type": "enumeration",
+      "required": true,
       "enum": [
         "Africa",
         "Antarctica",
@@ -30,19 +26,19 @@
       ]
     },
     "name_of_the_company": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "name_of_the_person": {
-      "type": "string"
-    },
-    "surname": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "foundation_year": {
       "type": "integer"
     },
     "country": {
       "type": "enumeration",
+      "required": true,
       "enum": [
         "Afghanistan",
         "Albania",
@@ -272,12 +268,13 @@
       "type": "text"
     },
     "email": {
-      "type": "email"
+      "type": "email",
+      "required": true
     },
     "telephone_mobile": {
       "type": "biginteger"
     },
-    "short_description_company": {
+    "short_description": {
       "type": "text"
     },
     "membership_duration": {

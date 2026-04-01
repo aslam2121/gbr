@@ -511,17 +511,221 @@ export interface ApiCompanyCompany extends Struct.CollectionTypeSchema {
       ]
     >;
     continent: Schema.Attribute.Enumeration<
-      ['asia', 'europe', 'north_america', 'south_america', 'africa', 'oceania']
-    >;
-    country: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 100;
-      }>;
+      [
+        'Africa',
+        'Antarctica',
+        'Asia',
+        'Europe',
+        'North America',
+        'Oceania',
+        'South America',
+      ]
+    > &
+      Schema.Attribute.Required;
+    country: Schema.Attribute.Enumeration<
+      [
+        'Afghanistan',
+        'Albania',
+        'Algeria',
+        'Andorra',
+        'Angola',
+        'Antigua & Deps',
+        'Argentina',
+        'Armenia',
+        'Australia',
+        'Austria',
+        'Azerbaijan',
+        'Bahamas',
+        'Bahrain',
+        'Bangladesh',
+        'Barbados',
+        'Belarus',
+        'Belgium',
+        'Belize',
+        'Benin',
+        'Bhutan',
+        'Bolivia',
+        'Bosnia Herzegovina',
+        'Botswana',
+        'Brazil',
+        'Brunei',
+        'Bulgaria',
+        'Burkina',
+        'Burundi',
+        'Cambodia',
+        'Cameroon',
+        'Canada',
+        'Cape Verde',
+        'Central African Rep',
+        'Chad',
+        'Chile',
+        'China',
+        'Colombia',
+        'Comoros',
+        'Congo',
+        'Congo {Democratic Rep}',
+        'Costa Rica',
+        'Croatia',
+        'Cuba',
+        'Cyprus',
+        'Czech Republic',
+        'Denmark',
+        'Djibouti',
+        'Dominica',
+        'Dominican Republic',
+        'East Timor',
+        'Ecuador',
+        'Egypt',
+        'El Salvador',
+        'Equatorial Guinea',
+        'Eritrea',
+        'Estonia',
+        'Ethiopia',
+        'Fiji',
+        'Finland',
+        'France',
+        'Gabon',
+        'Gambia',
+        'Georgia',
+        'Germany',
+        'Ghana',
+        'Greece',
+        'Grenada',
+        'Guatemala',
+        'Guinea',
+        'Guinea-Bissau',
+        'Guyana',
+        'Haiti',
+        'Honduras',
+        'Hungary',
+        'Iceland',
+        'India',
+        'Indonesia',
+        'Iran',
+        'Iraq',
+        'Ireland {Republic}',
+        'Israel',
+        'Italy',
+        'Ivory Coast',
+        'Jamaica',
+        'Japan',
+        'Jordan',
+        'Kazakhstan',
+        'Kenya',
+        'Kiribati',
+        'Korea North',
+        'Korea South',
+        'Kosovo',
+        'Kuwait',
+        'Kyrgyzstan',
+        'Laos',
+        'Latvia',
+        'Lebanon',
+        'Lesotho',
+        'Liberia',
+        'Libya',
+        'Liechtenstein',
+        'Lithuania',
+        'Luxembourg',
+        'Macedonia',
+        'Madagascar',
+        'Malawi',
+        'Malaysia',
+        'Maldives',
+        'Mali',
+        'Malta',
+        'Marshall Islands',
+        'Mauritania',
+        'Mauritius',
+        'Mexico',
+        'Micronesia',
+        'Moldova',
+        'Monaco',
+        'Mongolia',
+        'Montenegro',
+        'Morocco',
+        'Mozambique',
+        'Myanmar, {Burma}',
+        'Namibia',
+        'Nauru',
+        'Nepal',
+        'Netherlands',
+        'New Zealand',
+        'Nicaragua',
+        'Niger',
+        'Nigeria',
+        'Norway',
+        'Oman',
+        'Pakistan',
+        'Palau',
+        'Panama',
+        'Papua New Guinea',
+        'Paraguay',
+        'Peru',
+        'Philippines',
+        'Poland',
+        'Portugal',
+        'Qatar',
+        'Romania',
+        'Russian Federation',
+        'Rwanda',
+        'St Kitts & Nevis',
+        'St Lucia',
+        'Saint Vincent & the Grenadines',
+        'Samoa',
+        'San Marino',
+        'Sao Tome & Principe',
+        'Saudi Arabia',
+        'Senegal',
+        'Serbia',
+        'Seychelles',
+        'Sierra Leone',
+        'Singapore',
+        'Slovakia',
+        'Slovenia',
+        'Solomon Islands',
+        'Somalia',
+        'South Africa',
+        'South Sudan',
+        'Spain',
+        'Sri Lanka',
+        'Sudan',
+        'Suriname',
+        'Swaziland',
+        'Sweden',
+        'Switzerland',
+        'Syria',
+        'Taiwan',
+        'Tajikistan',
+        'Tanzania',
+        'Thailand',
+        'Togo',
+        'Tonga',
+        'Trinidad & Tobago',
+        'Tunisia',
+        'Turkey',
+        'Turkmenistan',
+        'Tuvalu',
+        'Uganda',
+        'Ukraine',
+        'United Arab Emirates',
+        'United Kingdom',
+        'United States',
+        'Uruguay',
+        'Uzbekistan',
+        'Vanuatu',
+        'Vatican City',
+        'Venezuela',
+        'Vietnam',
+        'Yemen',
+        'Zambia',
+        'Zimbabwe',
+      ]
+    > &
+      Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    description: Schema.Attribute.RichText;
     email: Schema.Attribute.Email &
       Schema.Attribute.Required &
       Schema.Attribute.Unique;
@@ -729,8 +933,6 @@ export interface ApiCompanyCompany extends Struct.CollectionTypeSchema {
         'Zimbabwe',
       ]
     >;
-    foundation_year: Schema.Attribute.Integer;
-    founded_year: Schema.Attribute.Integer;
     industry: Schema.Attribute.Enumeration<
       [
         'tech',
@@ -760,7 +962,7 @@ export interface ApiCompanyCompany extends Struct.CollectionTypeSchema {
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
-    name_of_the_person: Schema.Attribute.String;
+    name_of_the_person: Schema.Attribute.String & Schema.Attribute.Required;
     owner: Schema.Attribute.Relation<
       'manyToOne',
       'plugin::users-permissions.user'
@@ -779,6 +981,48 @@ export interface ApiCompanyCompany extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiConversationConversation
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'conversations';
+  info: {
+    description: 'Chat conversation between two users';
+    displayName: 'Conversation';
+    pluralName: 'conversations';
+    singularName: 'conversation';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    last_message_at: Schema.Attribute.DateTime;
+    last_message_text: Schema.Attribute.Text;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::conversation.conversation'
+    > &
+      Schema.Attribute.Private;
+    messages: Schema.Attribute.Relation<'oneToMany', 'api::message.message'>;
+    participant_one: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    > &
+      Schema.Attribute.Required;
+    participant_two: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    > &
+      Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiExpertExpert extends Struct.CollectionTypeSchema {
   collectionName: 'experts';
   info: {
@@ -792,8 +1036,19 @@ export interface ApiExpertExpert extends Struct.CollectionTypeSchema {
   };
   attributes: {
     any_other_details: Schema.Attribute.Text;
-    brief_description: Schema.Attribute.Text;
     consultation_fee: Schema.Attribute.Decimal;
+    continent: Schema.Attribute.Enumeration<
+      [
+        'Africa',
+        'Antarctica',
+        'Asia',
+        'Europe',
+        'North America',
+        'Oceania',
+        'South America',
+      ]
+    > &
+      Schema.Attribute.Required;
     country: Schema.Attribute.Enumeration<
       [
         'Afghanistan',
@@ -993,24 +1248,14 @@ export interface ApiExpertExpert extends Struct.CollectionTypeSchema {
         'Zambia',
         'Zimbabwe',
       ]
-    >;
+    > &
+      Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     cv_biography: Schema.Attribute.Media<'images' | 'files', true>;
     date_of_birth: Schema.Attribute.Date;
-    email: Schema.Attribute.Email;
-    expert_continent: Schema.Attribute.Enumeration<
-      [
-        'Africa',
-        'Antarctica',
-        'Asia',
-        'Europe',
-        'North America',
-        'Oceania',
-        'South America',
-      ]
-    >;
+    email: Schema.Attribute.Email & Schema.Attribute.Required;
     field_of_expertise: Schema.Attribute.Enumeration<
       ['Economics', 'Politics', 'Law']
     >;
@@ -1020,20 +1265,18 @@ export interface ApiExpertExpert extends Struct.CollectionTypeSchema {
       'api::expert.expert'
     > &
       Schema.Attribute.Private;
-    membership_duration: Schema.Attribute.Enumeration<['year 1 ']>;
-    name: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 255;
-      }>;
+    membership_duration: Schema.Attribute.Enumeration<
+      ['year 1', 'years 2', 'years 3']
+    >;
+    name_of_the_person: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
-    slug: Schema.Attribute.UID<'name'>;
+    short_description: Schema.Attribute.Text;
+    slug: Schema.Attribute.UID;
     specialisation_on_selected_field: Schema.Attribute.String;
     specialty: Schema.Attribute.String &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
-    surname: Schema.Attribute.String;
     telephone_mobile: Schema.Attribute.BigInteger;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -1064,7 +1307,8 @@ export interface ApiInvestorInvestor extends Struct.CollectionTypeSchema {
         'Oceania',
         'South America',
       ]
-    >;
+    > &
+      Schema.Attribute.Required;
     country: Schema.Attribute.Enumeration<
       [
         'Afghanistan',
@@ -1264,12 +1508,13 @@ export interface ApiInvestorInvestor extends Struct.CollectionTypeSchema {
         'Zambia',
         'Zimbabwe',
       ]
-    >;
+    > &
+      Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     eligibility_criteria: Schema.Attribute.Text;
-    email: Schema.Attribute.Email;
+    email: Schema.Attribute.Email & Schema.Attribute.Required;
     foundation_year: Schema.Attribute.Integer;
     investment_policies: Schema.Attribute.Text;
     investment_policies_file: Schema.Attribute.Media<'files', true>;
@@ -1284,16 +1529,10 @@ export interface ApiInvestorInvestor extends Struct.CollectionTypeSchema {
     membership_duration: Schema.Attribute.Enumeration<
       ['year 1', 'years 2', 'years 3']
     >;
-    name: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 255;
-      }>;
-    name_of_the_company: Schema.Attribute.String;
-    name_of_the_person: Schema.Attribute.String;
+    name_of_the_company: Schema.Attribute.String & Schema.Attribute.Required;
+    name_of_the_person: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
-    short_description_company: Schema.Attribute.Text;
-    surname: Schema.Attribute.String;
+    short_description: Schema.Attribute.Text;
     telephone_mobile: Schema.Attribute.BigInteger;
     type_of_investor: Schema.Attribute.Enumeration<
       [
@@ -1304,6 +1543,46 @@ export interface ApiInvestorInvestor extends Struct.CollectionTypeSchema {
         'Business lenders',
       ]
     >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiMessageMessage extends Struct.CollectionTypeSchema {
+  collectionName: 'messages';
+  info: {
+    description: 'Chat message within a conversation';
+    displayName: 'Message';
+    pluralName: 'messages';
+    singularName: 'message';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    content: Schema.Attribute.Text & Schema.Attribute.Required;
+    conversation: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::conversation.conversation'
+    > &
+      Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::message.message'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    read: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    sender: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    > &
+      Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1888,8 +2167,10 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::call-room.call-room': ApiCallRoomCallRoom;
       'api::company.company': ApiCompanyCompany;
+      'api::conversation.conversation': ApiConversationConversation;
       'api::expert.expert': ApiExpertExpert;
       'api::investor.investor': ApiInvestorInvestor;
+      'api::message.message': ApiMessageMessage;
       'api::subscription-plan.subscription-plan': ApiSubscriptionPlanSubscriptionPlan;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;

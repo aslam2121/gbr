@@ -17,33 +17,32 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-async function getCompany(slug: string): Promise<Company | null> {
+async function getCompany(documentId: string): Promise<Company | null> {
   try {
-    const res = await strapiGet<Company[]>("/companies", {
-      "filters[slug][$eq]": slug,
+    const res = await strapiGet<Company>(`/companies/${documentId}`, {
       "populate": "*",
     });
-    return res.data?.[0] ?? null;
+    return res.data ?? null;
   } catch {
     return null;
   }
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const company = await getCompany(slug);
+  const { slug: documentId } = await params;
+  const company = await getCompany(documentId);
   if (!company) return { title: "Company Not Found" };
   return {
-    title: `${company.name} | B2B Platform`,
-    description: company.description
-      ? String(company.description).slice(0, 160)
-      : `${company.name} — ${company.industry ?? ""} company based in ${company.country}`,
+    title: `${company.name_of_the_company} | B2B Platform`,
+    description: company.short_description
+      ? String(company.short_description).slice(0, 160)
+      : `${company.name_of_the_company} — ${company.industry ?? ""} company based in ${company.country}`,
   };
 }
 
 export default async function CompanyDetailPage({ params }: PageProps) {
-  const { slug } = await params;
-  const company = await getCompany(slug);
+  const { slug: documentId } = await params;
+  const company = await getCompany(documentId);
 
   if (!company) {
     notFound();
@@ -78,16 +77,16 @@ export default async function CompanyDetailPage({ params }: PageProps) {
                 {logoUrl ? (
                   <img
                     src={`${STRAPI_URL}${logoUrl}`}
-                    alt={`${company.name} logo`}
+                    alt={`${company.name_of_the_company} logo`}
                     className="h-16 w-16 rounded-xl object-contain bg-gray-50 p-2"
                   />
                 ) : (
                   <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-2xl font-bold text-blue-600">
-                    {company.name.charAt(0)}
+                    {company.name_of_the_company?.trim()?.charAt(0) ?? "?"}
                   </div>
                 )}
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900">{company.name}</h1>
+                  <h1 className="text-2xl font-bold text-gray-900">{company.name_of_the_company}</h1>
                   <div className="mt-2 flex flex-wrap items-center gap-2">
                     {company.industry && (
                       <span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700">
@@ -105,11 +104,11 @@ export default async function CompanyDetailPage({ params }: PageProps) {
             </div>
 
             {/* Description */}
-            {company.description && (
+            {company.short_description && (
               <div className="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
                 <h2 className="text-lg font-semibold text-gray-900">About</h2>
                 <div className="mt-3 text-gray-600 leading-relaxed whitespace-pre-wrap">
-                  {company.description}
+                  {company.short_description}
                 </div>
               </div>
             )}
@@ -146,13 +145,6 @@ export default async function CompanyDetailPage({ params }: PageProps) {
                     <dd className="mt-1 text-sm text-gray-900">
                       {EMPLOYEE_COUNT_LABELS[company.employee_count] ?? company.employee_count}
                     </dd>
-                  </div>
-                )}
-
-                {company.founded_year && (
-                  <div>
-                    <dt className="text-sm font-medium text-gray-500">Founded</dt>
-                    <dd className="mt-1 text-sm text-gray-900">{company.founded_year}</dd>
                   </div>
                 )}
 

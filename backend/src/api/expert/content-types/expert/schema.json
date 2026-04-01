@@ -12,17 +12,13 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "name": {
-      "type": "string",
-      "maxLength": 255,
-      "required": true
-    },
     "specialty": {
       "type": "string",
       "maxLength": 255
     },
-    "expert_continent": {
+    "continent": {
       "type": "enumeration",
+      "required": true,
       "enum": [
         "Africa",
         "Antarctica",
@@ -33,18 +29,15 @@
         "South America"
       ]
     },
-    "surname": {
-      "type": "string"
-    },
     "slug": {
-      "type": "uid",
-      "targetField": "name"
+      "type": "uid"
     },
     "date_of_birth": {
       "type": "date"
     },
     "country": {
       "type": "enumeration",
+      "required": true,
       "enum": [
         "Afghanistan",
         "Albania",
@@ -258,7 +251,7 @@
     "years_of_experience": {
       "type": "integer"
     },
-    "brief_description": {
+    "short_description": {
       "type": "text"
     },
     "cv_biography": {
@@ -276,7 +269,8 @@
       "type": "biginteger"
     },
     "email": {
-      "type": "email"
+      "type": "email",
+      "required": true
     },
     "any_other_details": {
       "type": "text"
@@ -284,8 +278,14 @@
     "membership_duration": {
       "type": "enumeration",
       "enum": [
-        "year 1 "
+        "year 1",
+        "years 2",
+        "years 3"
       ]
+    },
+    "name_of_the_person": {
+      "type": "string",
+      "required": true
     }
   }
 }

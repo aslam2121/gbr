@@ -25,10 +25,10 @@ export function CountryPopup({ country, companies }: CountryPopupProps) {
         {displayed.map((c) => (
           <li key={c.id}>
             <Link
-              href={`/directory/${c.slug}`}
+              href={`/directory/${c.documentId}`}
               className="block text-sm text-blue-600 hover:text-blue-700 hover:underline truncate"
             >
-              {c.name}
+              {c.name_of_the_company}
             </Link>
           </li>
         ))}

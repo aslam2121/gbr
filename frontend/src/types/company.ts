@@ -1,17 +1,23 @@
 export interface Company {
   id: number;
   documentId: string;
-  name: string;
-  slug: string;
-  description: string | null;
+  name_of_the_company: string;
+  name_of_the_person: string;
+  email: string;
+  telephone_mobile: string | null;
+  short_description: string | null;
   industry: string | null;
   country: string;
   continent: string | null;
   latitude: number | null;
   longitude: number | null;
   website: string | null;
-  founded_year: number | null;
   employee_count: string | null;
+  area_of_specification: string | null;
+  foundation_country: string | null;
+  requirements_for_partnership: string | null;
+  existing_partners: string | null;
+  membership_duration: string | null;
   logo: {
     url: string;
     formats?: {
@@ -32,14 +38,15 @@ export const EMPLOYEE_COUNT_LABELS: Record<string, string> = {
   s_500_plus: "500+",
 };
 
-/** Map continent enum to human-readable label */
+/** Map continent enum to human-readable label (keys match Strapi enum values) */
 export const CONTINENT_LABELS: Record<string, string> = {
-  asia: "Asia",
-  europe: "Europe",
-  north_america: "North America",
-  south_america: "South America",
-  africa: "Africa",
-  oceania: "Oceania",
+  "Africa": "Africa",
+  "Antarctica": "Antarctica",
+  "Asia": "Asia",
+  "Europe": "Europe",
+  "North America": "North America",
+  "Oceania": "Oceania",
+  "South America": "South America",
 };
 
 /** Map industry enum to human-readable label */
@@ -65,7 +72,7 @@ export function countryFlag(country: string): string {
     Australia: "\u{1F1E6}\u{1F1FA}",
     India: "\u{1F1EE}\u{1F1F3}",
     Singapore: "\u{1F1F8}\u{1F1EC}",
-    UAE: "\u{1F1E6}\u{1F1EA}",
+    "United Arab Emirates": "\u{1F1E6}\u{1F1EA}",
     Japan: "\u{1F1EF}\u{1F1F5}",
     Brazil: "\u{1F1E7}\u{1F1F7}",
     Argentina: "\u{1F1E6}\u{1F1F7}",

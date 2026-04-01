@@ -20,13 +20,12 @@ export default async function Home() {
   try {
     const res = await strapiGet<Company[]>("/companies", {
       "pagination[pageSize]": 100,
-      "fields[0]": "name",
-      "fields[1]": "slug",
-      "fields[2]": "country",
-      "fields[3]": "continent",
-      "fields[4]": "latitude",
-      "fields[5]": "longitude",
-      "fields[6]": "industry",
+      "fields[0]": "name_of_the_company",
+      "fields[1]": "country",
+      "fields[2]": "continent",
+      "fields[3]": "latitude",
+      "fields[4]": "longitude",
+      "fields[5]": "industry",
     });
     companies = res.data ?? [];
   } catch {

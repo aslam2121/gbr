@@ -41,7 +41,7 @@ export function CompanyMap({ company }: CompanyMapProps) {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <Marker position={[lat, lng]}>
-            <Popup>{company.name}</Popup>
+            <Popup>{company.name_of_the_company}</Popup>
           </Marker>
         </MapContainer>
       );
