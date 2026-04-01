@@ -14,23 +14,39 @@ const HomeMap = dynamic(() => import("@/modules/map/HomeMap"), {
   ),
 });
 
-export default async function Home() {
-  let companies: Company[] = [];
+async function fetchAllCompanies(): Promise<Company[]> {
+  const all: Company[] = [];
+  let page = 1;
+  const pageSize = 100;
 
   try {
-    const res = await strapiGet<Company[]>("/companies", {
-      "pagination[pageSize]": 100,
-      "fields[0]": "name_of_the_company",
-      "fields[1]": "country",
-      "fields[2]": "continent",
-      "fields[3]": "latitude",
-      "fields[4]": "longitude",
-      "fields[5]": "industry",
-    });
-    companies = res.data ?? [];
+    while (true) {
+      const res = await strapiGet<Company[]>("/companies", {
+        "pagination[page]": page,
+        "pagination[pageSize]": pageSize,
+        "fields[0]": "name_of_the_company",
+        "fields[1]": "country",
+        "fields[2]": "continent",
+        "fields[3]": "latitude",
+        "fields[4]": "longitude",
+        "fields[5]": "industry",
+      });
+      const batch = res.data ?? [];
+      all.push(...batch);
+
+      const totalPages = res.meta?.pagination?.pageCount ?? 1;
+      if (page >= totalPages) break;
+      page++;
+    }
   } catch {
     // Strapi not available
   }
+
+  return all;
+}
+
+export default async function Home() {
+  const companies = await fetchAllCompanies();
 
   return (
     <>

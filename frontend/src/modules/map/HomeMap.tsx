@@ -14,6 +14,70 @@ const CONTINENT_COLORS: Record<string, string> = {
   "Oceania": "#06B6D4",
 };
 
+/** Map GeoJSON country names → Strapi enum names where they differ */
+const GEOJSON_TO_STRAPI: Record<string, string> = {
+  "United States of America": "United States",
+  "Republic of Serbia": "Serbia",
+  "United Republic of Tanzania": "Tanzania",
+  "Republic of the Congo": "Congo",
+  "Democratic Republic of the Congo": "Congo {Democratic Rep}",
+  "Ivory Coast": "Ivory Coast",
+  "Côte d'Ivoire": "Ivory Coast",
+  "The Bahamas": "Bahamas",
+  "Guinea Bissau": "Guinea-Bissau",
+  "Republic of Macedonia": "Macedonia",
+  "North Macedonia": "Macedonia",
+  "Timor-Leste": "East Timor",
+  "East Timor": "East Timor",
+  "Myanmar": "Myanmar, {Burma}",
+  "Cabo Verde": "Cape Verde",
+  "eSwatini": "Swaziland",
+  "Swaziland": "Swaziland",
+  "Antigua and Barbuda": "Antigua & Deps",
+  "Trinidad and Tobago": "Trinidad & Tobago",
+  "Saint Kitts and Nevis": "St Kitts & Nevis",
+  "Saint Lucia": "St Lucia",
+  "Saint Vincent and the Grenadines": "Saint Vincent & the Grenadines",
+  "São Tomé and Príncipe": "Sao Tome & Principe",
+  "Sao Tome and Principe": "Sao Tome & Principe",
+  "Bosnia and Herzegovina": "Bosnia Herzegovina",
+  "Czech Republic": "Czech Republic",
+  "Czechia": "Czech Republic",
+  "South Korea": "Korea South",
+  "Republic of Korea": "Korea South",
+  "Korea": "Korea South",
+  "North Korea": "Korea North",
+  "Dem. Rep. Korea": "Korea North",
+  "Democratic People's Republic of Korea": "Korea North",
+  "Lao PDR": "Laos",
+  "Lao People's Democratic Republic": "Laos",
+  "Laos": "Laos",
+  "Russian Federation": "Russian Federation",
+  "Russia": "Russian Federation",
+  "Iran (Islamic Republic of)": "Iran",
+  "Iran, Islamic Republic of": "Iran",
+  "Syria": "Syria",
+  "Syrian Arab Republic": "Syria",
+  "Brunei Darussalam": "Brunei",
+  "Brunei": "Brunei",
+  "Burkina Faso": "Burkina",
+  "Central African Republic": "Central African Rep",
+  "Ireland": "Ireland {Republic}",
+  "Micronesia (Federated States of)": "Micronesia",
+  "Federated States of Micronesia": "Micronesia",
+  "Viet Nam": "Vietnam",
+  "Vietnam": "Vietnam",
+  "Palestine": "Israel",
+  "Somaliland": "Somalia",
+  "Western Sahara": "Morocco",
+  "Taiwan": "Taiwan",
+  "Northern Cyprus": "Cyprus",
+};
+
+function mapGeoJsonCountry(geoName: string): string {
+  return GEOJSON_TO_STRAPI[geoName] ?? geoName;
+}
+
 interface HomeMapProps {
   companies: Company[];
 }
@@ -131,8 +195,9 @@ export default function HomeMap({ companies }: HomeMapProps) {
         geojsonLayer = L.geoJSON(geojsonData, {
           style: countryStyle,
           onEachFeature: (feature, layer) => {
-            const countryName: string =
+            const rawName: string =
               feature.properties.ADMIN ?? feature.properties.name ?? "Unknown";
+            const countryName = mapGeoJsonCountry(rawName);
 
             const countryCompanies = companies.filter(
               (c) => c.country === countryName
