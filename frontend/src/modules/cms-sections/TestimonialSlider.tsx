@@ -44,7 +44,7 @@ export function TestimonialSlider({ section }: TestimonialSliderProps) {
 
             <div className="mt-8 flex items-center gap-4">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-lg font-bold text-blue-600">
-                {testimonials[current].name.charAt(0)}
+                {testimonials[current].name?.trim()?.charAt(0) ?? "?"}
               </div>
               <div>
                 <p className="font-semibold text-gray-900">
