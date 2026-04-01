@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { strapiGet } from "@/lib/strapi";
 import { type Company } from "@/types/company";
 
 const CONTINENT_COLORS: Record<string, string> = {
@@ -21,18 +22,15 @@ const GEOJSON_TO_STRAPI: Record<string, string> = {
   "United Republic of Tanzania": "Tanzania",
   "Republic of the Congo": "Congo",
   "Democratic Republic of the Congo": "Congo {Democratic Rep}",
-  "Ivory Coast": "Ivory Coast",
   "Côte d'Ivoire": "Ivory Coast",
   "The Bahamas": "Bahamas",
   "Guinea Bissau": "Guinea-Bissau",
   "Republic of Macedonia": "Macedonia",
   "North Macedonia": "Macedonia",
   "Timor-Leste": "East Timor",
-  "East Timor": "East Timor",
   "Myanmar": "Myanmar, {Burma}",
   "Cabo Verde": "Cape Verde",
   "eSwatini": "Swaziland",
-  "Swaziland": "Swaziland",
   "Antigua and Barbuda": "Antigua & Deps",
   "Trinidad and Tobago": "Trinidad & Tobago",
   "Saint Kitts and Nevis": "St Kitts & Nevis",
@@ -41,36 +39,23 @@ const GEOJSON_TO_STRAPI: Record<string, string> = {
   "São Tomé and Príncipe": "Sao Tome & Principe",
   "Sao Tome and Principe": "Sao Tome & Principe",
   "Bosnia and Herzegovina": "Bosnia Herzegovina",
-  "Czech Republic": "Czech Republic",
   "Czechia": "Czech Republic",
   "South Korea": "Korea South",
   "Republic of Korea": "Korea South",
-  "Korea": "Korea South",
   "North Korea": "Korea North",
-  "Dem. Rep. Korea": "Korea North",
   "Democratic People's Republic of Korea": "Korea North",
   "Lao PDR": "Laos",
-  "Lao People's Democratic Republic": "Laos",
-  "Laos": "Laos",
-  "Russian Federation": "Russian Federation",
   "Russia": "Russian Federation",
   "Iran (Islamic Republic of)": "Iran",
-  "Iran, Islamic Republic of": "Iran",
-  "Syria": "Syria",
   "Syrian Arab Republic": "Syria",
   "Brunei Darussalam": "Brunei",
-  "Brunei": "Brunei",
   "Burkina Faso": "Burkina",
   "Central African Republic": "Central African Rep",
   "Ireland": "Ireland {Republic}",
-  "Micronesia (Federated States of)": "Micronesia",
   "Federated States of Micronesia": "Micronesia",
   "Viet Nam": "Vietnam",
-  "Vietnam": "Vietnam",
-  "Palestine": "Israel",
   "Somaliland": "Somalia",
   "Western Sahara": "Morocco",
-  "Taiwan": "Taiwan",
   "Northern Cyprus": "Cyprus",
 };
 
@@ -78,11 +63,26 @@ function mapGeoJsonCountry(geoName: string): string {
   return GEOJSON_TO_STRAPI[geoName] ?? geoName;
 }
 
-interface HomeMapProps {
-  companies: Company[];
+/** Fetch companies for a specific country from Strapi */
+async function fetchCompaniesByCountry(country: string): Promise<Company[]> {
+  try {
+    const res = await strapiGet<Company[]>("/companies", {
+      "filters[country][$eq]": country,
+      "fields[0]": "name_of_the_company",
+      "fields[1]": "country",
+      "fields[2]": "continent",
+      "fields[3]": "latitude",
+      "fields[4]": "longitude",
+      "fields[5]": "industry",
+      "pagination[pageSize]": 100,
+    });
+    return res.data ?? [];
+  } catch {
+    return [];
+  }
 }
 
-export default function HomeMap({ companies }: HomeMapProps) {
+export default function HomeMap() {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
 
@@ -100,7 +100,14 @@ export default function HomeMap({ companies }: HomeMapProps) {
 
     let cancelled = false;
     let geojsonLayer: L.GeoJSON | null = null;
+    let activeLayer: L.Layer | null = null;
+    let activeCountry = "";
     const markerLayer = L.layerGroup().addTo(map);
+
+    // Loading indicator
+    const loadingDiv = L.DomUtil.create("div", "");
+    loadingDiv.innerHTML = `<div id="mapLoading" style="display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1000;background:rgba(0,0,0,0.7);color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;">Loading companies...</div>`;
+    map.getContainer().appendChild(loadingDiv);
 
     function countryStyle() {
       return {
@@ -112,79 +119,129 @@ export default function HomeMap({ companies }: HomeMapProps) {
       };
     }
 
-    function highlightStyle() {
+    function activeStyle() {
       return {
-        fillColor: "#42a5f5",
+        fillColor: "#0582ad",
         weight: 2,
-        color: "#1e88e5",
+        opacity: 1,
+        color: "#42a5f5",
+        fillOpacity: 0.85,
       };
     }
 
-    function addMarkerForCompany(company: Company) {
-      if (!company.latitude || !company.longitude) return;
-
-      const color = CONTINENT_COLORS[company.continent ?? ""] ?? "#0083ae";
-
-      const icon = L.divIcon({
-        className: "",
-        html: `<div style="width:14px;height:14px;background:${color};border:2px solid #fff;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,0.4);cursor:pointer;"></div>`,
-        iconSize: [14, 14],
-        iconAnchor: [7, 7],
-      });
-
-      L.marker([company.latitude, company.longitude], { icon })
-        .bindPopup(
-          `<div style="min-width:150px;">` +
-            `<strong><a href="/directory/${company.documentId}" style="color:#0083ae;text-decoration:none;">${company.name_of_the_company}</a></strong>` +
-            `<br/><span style="font-size:12px;color:#666;">${company.country}</span>` +
-            (company.industry
-              ? `<br/><span style="font-size:11px;color:#999;text-transform:capitalize;">${company.industry}</span>`
-              : "") +
-            `</div>`
-        )
-        .addTo(markerLayer);
-    }
-
-    function showCompanyMarkers(companyList: Company[]) {
+    function addMarkers(companies: Company[]) {
       markerLayer.clearLayers();
-      companyList.forEach(addMarkerForCompany);
+      for (const company of companies) {
+        if (!company.latitude || !company.longitude) continue;
+
+        const color = CONTINENT_COLORS[company.continent ?? ""] ?? "#0083ae";
+
+        const icon = L.divIcon({
+          className: "",
+          html: `<div style="width:12px;height:12px;background:${color};border:2px solid #fff;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,0.4);cursor:pointer;"></div>`,
+          iconSize: [12, 12],
+          iconAnchor: [6, 6],
+        });
+
+        L.marker([company.latitude, company.longitude], { icon })
+          .bindPopup(
+            `<div style="min-width:150px;">` +
+              `<strong><a href="/directory/${company.documentId}" style="color:#0083ae;text-decoration:none;">${company.name_of_the_company}</a></strong>` +
+              `<br/><span style="font-size:12px;color:#666;">${company.country}</span>` +
+              (company.industry
+                ? `<br/><span style="font-size:11px;color:#999;text-transform:capitalize;">${company.industry}</span>`
+                : "") +
+              `</div>`
+          )
+          .addTo(markerLayer);
+      }
     }
 
-    function updateMarkersForViewport() {
-      const zoom = map.getZoom();
-      if (zoom < 4) {
-        markerLayer.clearLayers();
-        return;
+    async function selectCountry(strapiName: string, layer: L.Layer) {
+      // Reset previous active country style
+      if (activeLayer && geojsonLayer) {
+        (activeLayer as L.Path).setStyle(countryStyle());
       }
 
-      const bounds = map.getBounds();
-      const visible = companies.filter(
-        (c) =>
-          c.latitude &&
-          c.longitude &&
-          bounds.contains([c.latitude, c.longitude])
-      );
-      showCompanyMarkers(visible);
+      // Set new active
+      activeCountry = strapiName;
+      activeLayer = layer;
+      (layer as L.Path).setStyle(activeStyle());
 
-      // Show back button when zoomed in
+      // Zoom to country
+      const bounds = (layer as L.Polygon).getBounds();
+      map.fitBounds(bounds, { padding: [40, 40], maxZoom: 6 });
+
+      // Show loading, fetch, show markers
+      const loadingEl = document.getElementById("mapLoading");
+      if (loadingEl) loadingEl.style.display = "block";
+
+      const companies = await fetchCompaniesByCountry(strapiName);
+      addMarkers(companies);
+
+      if (loadingEl) loadingEl.style.display = "none";
+
+      // Show back button
       const backBtn = document.getElementById("backToWorld");
-      if (backBtn) backBtn.style.display = zoom >= 4 ? "block" : "none";
+      if (backBtn) backBtn.style.display = "block";
+
+      // Show count info
+      const infoEl = document.getElementById("countryInfo");
+      if (infoEl) {
+        infoEl.style.display = "block";
+        infoEl.innerHTML = `<strong>${strapiName}</strong> — ${companies.length} companies`;
+      }
     }
 
-    map.on("moveend", updateMarkersForViewport);
+    function resetToWorld() {
+      // Reset active country
+      if (activeLayer) {
+        (activeLayer as L.Path).setStyle(countryStyle());
+      }
+      activeLayer = null;
+      activeCountry = "";
+      markerLayer.clearLayers();
 
-    // Back to world view button
+      if (geojsonLayer) {
+        map.fitBounds(geojsonLayer.getBounds());
+      }
+
+      const backBtn = document.getElementById("backToWorld");
+      if (backBtn) backBtn.style.display = "none";
+
+      const infoEl = document.getElementById("countryInfo");
+      if (infoEl) infoEl.style.display = "none";
+    }
+
+    // Back to world button
     const BackControl = L.Control.extend({
       options: { position: "topleft" as const },
       onAdd: () => {
-        const btn = L.DomUtil.create("div", "");
-        btn.innerHTML = `<button style="background:#fff;border:2px solid rgba(0,0,0,0.2);border-radius:4px;padding:4px 10px;cursor:pointer;font-size:13px;font-family:inherit;display:none;" id="backToWorld">← World View</button>`;
-        L.DomEvent.disableClickPropagation(btn);
-        return btn;
+        const container = L.DomUtil.create("div", "");
+        container.innerHTML = `
+          <button id="backToWorld" style="display:none;background:#fff;border:2px solid rgba(0,0,0,0.2);border-radius:4px;padding:6px 12px;cursor:pointer;font-size:13px;font-family:inherit;box-shadow:0 1px 4px rgba(0,0,0,0.15);">← World View</button>
+        `;
+        L.DomEvent.disableClickPropagation(container);
+        return container;
       },
     });
     new BackControl().addTo(map);
 
+    // Country info bar
+    const InfoControl = L.Control.extend({
+      options: { position: "topright" as const },
+      onAdd: () => {
+        const container = L.DomUtil.create("div", "");
+        container.innerHTML = `
+          <div id="countryInfo" style="display:none;background:#fff;border-radius:4px;padding:8px 14px;font-size:13px;font-family:inherit;box-shadow:0 1px 4px rgba(0,0,0,0.15);color:#333;"></div>
+        `;
+        L.DomEvent.disableClickPropagation(container);
+        return container;
+      },
+    });
+    new InfoControl().addTo(map);
+
+    // Load GeoJSON
     fetch(
       "https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson"
     )
@@ -197,52 +254,41 @@ export default function HomeMap({ companies }: HomeMapProps) {
           onEachFeature: (feature, layer) => {
             const rawName: string =
               feature.properties.ADMIN ?? feature.properties.name ?? "Unknown";
-            const countryName = mapGeoJsonCountry(rawName);
+            const strapiName = mapGeoJsonCountry(rawName);
 
-            const countryCompanies = companies.filter(
-              (c) => c.country === countryName
-            );
-            const count = countryCompanies.length;
-
-            // Tooltip on hover showing country name + count
+            // Tooltip on hover
             layer.bindTooltip(
-              `<strong>${countryName}</strong>${count > 0 ? `<br/>${count} compan${count === 1 ? "y" : "ies"}` : ""}`,
+              `<strong>${strapiName}</strong><br/><span style="font-size:11px;color:#888;">Click to view companies</span>`,
               { sticky: true, className: "leaflet-tooltip" }
             );
 
             layer.on({
               mouseover: () => {
-                (layer as L.Path).setStyle(highlightStyle());
+                if (activeCountry !== strapiName) {
+                  (layer as L.Path).setStyle({
+                    fillColor: "#065a73",
+                    weight: 1.5,
+                    color: "#42a5f5",
+                    fillOpacity: 0.8,
+                  });
+                }
               },
               mouseout: () => {
-                (layer as L.Path).setStyle(countryStyle());
+                if (activeCountry !== strapiName) {
+                  (layer as L.Path).setStyle(countryStyle());
+                }
               },
               click: () => {
-                // Zoom into the country bounds
-                const bounds = (layer as L.Polygon).getBounds();
-                map.fitBounds(bounds, { padding: [40, 40], maxZoom: 6 });
-
-                // Show company markers for this country
-                showCompanyMarkers(countryCompanies);
-
-                // Show back button
-                const backBtn = document.getElementById("backToWorld");
-                if (backBtn) backBtn.style.display = "block";
+                selectCountry(strapiName, layer);
               },
             });
           },
         }).addTo(map);
 
-        // Back to world click handler
+        // Wire up back button
         const backBtn = document.getElementById("backToWorld");
         if (backBtn) {
-          backBtn.addEventListener("click", () => {
-            if (geojsonLayer) {
-              map.fitBounds(geojsonLayer.getBounds());
-            }
-            markerLayer.clearLayers();
-            backBtn.style.display = "none";
-          });
+          backBtn.addEventListener("click", resetToWorld);
         }
 
         map.fitBounds(geojsonLayer.getBounds());
@@ -253,7 +299,7 @@ export default function HomeMap({ companies }: HomeMapProps) {
       map.remove();
       mapInstanceRef.current = null;
     };
-  }, [companies]);
+  }, []);
 
   return <div ref={mapRef} style={{ height: "800px", border: "2px solid #ccc" }} />;
 }

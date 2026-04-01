@@ -1,8 +1,6 @@
 import { HeroBanner } from "@/modules/cms-sections/HeroBanner";
 import { AuthHeader } from "@/modules/cms-sections/AuthHeader";
 import { LiveChatSidebar } from "@/modules/cms-sections/LiveChatSidebar";
-import { strapiGet } from "@/lib/strapi";
-import { type Company } from "@/types/company";
 import dynamic from "next/dynamic";
 
 const HomeMap = dynamic(() => import("@/modules/map/HomeMap"), {
@@ -14,40 +12,7 @@ const HomeMap = dynamic(() => import("@/modules/map/HomeMap"), {
   ),
 });
 
-async function fetchAllCompanies(): Promise<Company[]> {
-  const all: Company[] = [];
-  let page = 1;
-  const pageSize = 100;
-
-  try {
-    while (true) {
-      const res = await strapiGet<Company[]>("/companies", {
-        "pagination[page]": page,
-        "pagination[pageSize]": pageSize,
-        "fields[0]": "name_of_the_company",
-        "fields[1]": "country",
-        "fields[2]": "continent",
-        "fields[3]": "latitude",
-        "fields[4]": "longitude",
-        "fields[5]": "industry",
-      });
-      const batch = res.data ?? [];
-      all.push(...batch);
-
-      const totalPages = res.meta?.pagination?.pageCount ?? 1;
-      if (page >= totalPages) break;
-      page++;
-    }
-  } catch {
-    // Strapi not available
-  }
-
-  return all;
-}
-
-export default async function Home() {
-  const companies = await fetchAllCompanies();
-
+export default function Home() {
   return (
     <>
       {/* Auth header bar */}
@@ -62,7 +27,7 @@ export default async function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-12">
             {/* Map */}
             <div className="lg:col-span-8" style={{ padding: 0 }}>
-              <HomeMap companies={companies} />
+              <HomeMap />
             </div>
             {/* Sidebar */}
             <div className="lg:col-span-4" style={{ padding: 0 }}>
