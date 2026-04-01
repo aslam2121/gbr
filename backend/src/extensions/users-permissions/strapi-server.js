@@ -9,9 +9,38 @@ const { ApplicationError, ValidationError } = utils.errors;
 const VALID_USER_TYPES = ['company', 'investor', 'expert'];
 
 const REQUIRED_FIELDS = {
-  company: ['company_name'],
-  investor: ['investor_name'],
-  expert: ['expert_name', 'specialty'],
+  company: ['name_of_the_company', 'name_of_the_person', 'email'],
+  investor: ['name_of_the_company', 'name_of_the_person', 'email'],
+  expert: ['name_of_the_person', 'email'],
+};
+
+// Fields that belong to each profile content type (not the user)
+const COMPANY_PROFILE_FIELDS = [
+  'name_of_the_company', 'name_of_the_person', 'email', 'telephone_mobile',
+  'industry', 'employee_count', 'website', 'area_of_specification',
+  'short_description', 'description', 'requirements_for_partnership',
+  'existing_partners', 'continent', 'country', 'foundation_country',
+  'membership_duration',
+];
+
+const INVESTOR_PROFILE_FIELDS = [
+  'name_of_the_company', 'name_of_the_person', 'email', 'telephone_mobile',
+  'foundation_year', 'type_of_investor', 'investment_policies',
+  'eligibility_criteria', 'short_description', 'continent', 'country',
+  'location_of_headquarters', 'location_of_branches', 'membership_duration',
+];
+
+const EXPERT_PROFILE_FIELDS = [
+  'name_of_the_person', 'email', 'telephone_mobile', 'date_of_birth',
+  'specialty', 'field_of_expertise', 'specialisation_on_selected_field',
+  'years_of_experience', 'short_description', 'any_other_details',
+  'consultation_fee', 'continent', 'country', 'membership_duration',
+];
+
+const PROFILE_FIELDS_MAP = {
+  company: COMPANY_PROFILE_FIELDS,
+  investor: INVESTOR_PROFILE_FIELDS,
+  expert: EXPERT_PROFILE_FIELDS,
 };
 
 const sanitizeUser = (user, ctx) => {
@@ -28,8 +57,8 @@ module.exports = (plugin) => {
   const originalRegister = plugin.controllers.auth.register;
 
   plugin.controllers.auth.register = async (ctx) => {
-    const { user_type, display_name, company_name, investor_name, expert_name, specialty, ...rest } =
-      ctx.request.body;
+    const body = ctx.request.body;
+    const { user_type, display_name } = body;
 
     // If no user_type provided, fall back to default Strapi register
     if (!user_type) {
@@ -44,7 +73,7 @@ module.exports = (plugin) => {
 
     // Validate required fields per user_type
     const required = REQUIRED_FIELDS[user_type];
-    const missing = required.filter((field) => !ctx.request.body[field]);
+    const missing = required.filter((field) => !body[field]);
     if (missing.length > 0) {
       throw new ValidationError(
         `Missing required fields for ${user_type}: ${missing.join(', ')}`
@@ -62,7 +91,6 @@ module.exports = (plugin) => {
     const { register } = strapi.config.get('plugin::users-permissions');
     const alwaysAllowedKeys = ['username', 'password', 'email'];
     const customAllowedKeys = ['user_type', 'display_name'];
-    const profileKeys = ['company_name', 'investor_name', 'expert_name', 'specialty'];
 
     const allowedKeys = compact(
       concat(
@@ -72,15 +100,14 @@ module.exports = (plugin) => {
       )
     );
 
-    // Build user params (exclude profile-specific keys from validation)
+    // Build user params
     const params = {
-      ..._.pick(ctx.request.body, allowedKeys),
+      ..._.pick(body, allowedKeys),
       provider: 'local',
     };
 
     const validations = strapi.config.get('plugin::users-permissions.validationRules');
 
-    // Validate using Strapi's built-in validation (checks username, email, password)
     const { validateRegisterBody } = require('@strapi/plugin-users-permissions/server/controllers/validation/auth');
     await validateRegisterBody(params, validations);
 
@@ -128,33 +155,29 @@ module.exports = (plugin) => {
       username,
       confirmed: !settings.email_confirmation,
       user_type,
-      display_name: display_name || username,
+      display_name: display_name || body.name_of_the_person || username,
       subscription_status: 'free',
     };
 
     const user = await getService('user').add(newUser);
 
-    // Create the corresponding profile entry
-    const profileData = { user: user.id };
+    // Build profile data from allowed fields for this user_type
+    const allowedProfileFields = PROFILE_FIELDS_MAP[user_type];
+    const profileData = _.pick(body, allowedProfileFields);
 
-    switch (user_type) {
-      case 'company':
-        profileData.name = company_name;
-        profileData.country = ctx.request.body.country || 'Other';
-        profileData.owner = user.id;
-        delete profileData.user;
-        await strapi.documents('api::company.company').create({ data: profileData });
-        break;
-      case 'investor':
-        profileData.name = investor_name;
-        await strapi.documents('api::investor.investor').create({ data: profileData });
-        break;
-      case 'expert':
-        profileData.name = expert_name;
-        profileData.specialty = specialty;
-        await strapi.documents('api::expert.expert').create({ data: profileData });
-        break;
+    // Add owner relation for company
+    if (user_type === 'company') {
+      profileData.owner = user.id;
     }
+
+    // Create the profile entry
+    const apiMap = {
+      company: 'api::company.company',
+      investor: 'api::investor.investor',
+      expert: 'api::expert.expert',
+    };
+
+    await strapi.documents(apiMap[user_type]).create({ data: profileData });
 
     const sanitizedUser = await sanitizeUser(user, ctx);
 
