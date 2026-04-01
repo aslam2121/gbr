@@ -47,28 +47,42 @@ export function InvestorRegisterForm() {
   const onSubmit = async (data: InvestorFormData) => {
     setError("");
     try {
-      await axios.post(`${STRAPI_URL}/api/auth/local/register`, {
+      // Step 1: Register user account
+      const regRes = await axios.post(`${STRAPI_URL}/api/auth/local/register`, {
         username: data.email.split("@")[0] + "_" + Date.now(),
         email: data.email,
         password: data.password,
         user_type: "investor",
         display_name: data.name_of_the_person,
-        // Profile fields
-        name_of_the_company: data.name_of_the_company,
-        name_of_the_person: data.name_of_the_person,
-        telephone_mobile: data.telephone_mobile || undefined,
-        foundation_year: data.foundation_year ? parseInt(data.foundation_year) : undefined,
-        type_of_investor: data.type_of_investor || undefined,
-        investment_policies: data.investment_policies || undefined,
-        eligibility_criteria: data.eligibility_criteria || undefined,
-        short_description: data.short_description || undefined,
-        continent: data.continent,
-        country: data.country,
-        location_of_headquarters: data.location_of_headquarters || undefined,
-        location_of_branches: data.location_of_branches || undefined,
-        membership_duration: data.membership_duration,
       });
 
+      const jwt = regRes.data.jwt;
+
+      // Step 2: Create investor profile with all fields
+      await axios.post(
+        `${STRAPI_URL}/api/investors`,
+        {
+          data: {
+            name_of_the_company: data.name_of_the_company,
+            name_of_the_person: data.name_of_the_person,
+            email: data.email,
+            telephone_mobile: data.telephone_mobile || undefined,
+            foundation_year: data.foundation_year ? parseInt(data.foundation_year) : undefined,
+            type_of_investor: data.type_of_investor || undefined,
+            investment_policies: data.investment_policies || undefined,
+            eligibility_criteria: data.eligibility_criteria || undefined,
+            short_description: data.short_description || undefined,
+            continent: data.continent,
+            country: data.country,
+            location_of_headquarters: data.location_of_headquarters || undefined,
+            location_of_branches: data.location_of_branches || undefined,
+            membership_duration: data.membership_duration,
+          },
+        },
+        { headers: { Authorization: `Bearer ${jwt}` } }
+      );
+
+      // Step 3: Auto-login
       const result = await signIn("credentials", {
         redirect: false,
         identifier: data.email,

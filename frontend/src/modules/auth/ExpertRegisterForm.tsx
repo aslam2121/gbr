@@ -53,28 +53,42 @@ export function ExpertRegisterForm() {
     const fee = showCustomFee ? customFee : data.consultation_fee;
 
     try {
-      await axios.post(`${STRAPI_URL}/api/auth/local/register`, {
+      // Step 1: Register user account
+      const regRes = await axios.post(`${STRAPI_URL}/api/auth/local/register`, {
         username: data.email.split("@")[0] + "_" + Date.now(),
         email: data.email,
         password: data.password,
         user_type: "expert",
         display_name: data.name_of_the_person,
-        // Profile fields
-        name_of_the_person: data.name_of_the_person,
-        telephone_mobile: data.telephone_mobile || undefined,
-        date_of_birth: data.date_of_birth || undefined,
-        specialty: data.specialty || undefined,
-        field_of_expertise: data.field_of_expertise || undefined,
-        specialisation_on_selected_field: data.specialisation_on_selected_field || undefined,
-        years_of_experience: data.years_of_experience ? parseInt(data.years_of_experience) : undefined,
-        short_description: data.short_description || undefined,
-        any_other_details: data.any_other_details || undefined,
-        consultation_fee: fee ? parseFloat(fee) : undefined,
-        continent: data.continent,
-        country: data.country,
-        membership_duration: data.membership_duration,
       });
 
+      const jwt = regRes.data.jwt;
+
+      // Step 2: Create expert profile with all fields
+      await axios.post(
+        `${STRAPI_URL}/api/experts`,
+        {
+          data: {
+            name_of_the_person: data.name_of_the_person,
+            email: data.email,
+            telephone_mobile: data.telephone_mobile || undefined,
+            date_of_birth: data.date_of_birth || undefined,
+            specialty: data.specialty || undefined,
+            field_of_expertise: data.field_of_expertise || undefined,
+            specialisation_on_selected_field: data.specialisation_on_selected_field || undefined,
+            years_of_experience: data.years_of_experience ? parseInt(data.years_of_experience) : undefined,
+            short_description: data.short_description || undefined,
+            any_other_details: data.any_other_details || undefined,
+            consultation_fee: fee ? parseFloat(fee) : undefined,
+            continent: data.continent,
+            country: data.country,
+            membership_duration: data.membership_duration,
+          },
+        },
+        { headers: { Authorization: `Bearer ${jwt}` } }
+      );
+
+      // Step 3: Auto-login
       const result = await signIn("credentials", {
         redirect: false,
         identifier: data.email,

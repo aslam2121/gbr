@@ -25,7 +25,7 @@ interface CompanyFormData {
   website: string;
   area_of_specification: string;
   short_description: string;
-  description: string;
+  // description: string;
   requirements_for_partnership: string;
   existing_partners: string;
   continent: string;
@@ -49,30 +49,43 @@ export function CompanyRegisterForm() {
   const onSubmit = async (data: CompanyFormData) => {
     setError("");
     try {
-      await axios.post(`${STRAPI_URL}/api/auth/local/register`, {
+      // Step 1: Register user account
+      const regRes = await axios.post(`${STRAPI_URL}/api/auth/local/register`, {
         username: data.email.split("@")[0] + "_" + Date.now(),
         email: data.email,
         password: data.password,
         user_type: "company",
         display_name: data.name_of_the_company,
-        // Profile fields
-        name_of_the_company: data.name_of_the_company,
-        name_of_the_person: data.name_of_the_person,
-        telephone_mobile: data.telephone_mobile || undefined,
-        industry: data.industry || undefined,
-        employee_count: data.employee_count || undefined,
-        website: data.website || undefined,
-        area_of_specification: data.area_of_specification || undefined,
-        short_description: data.short_description || undefined,
-        description: data.description || undefined,
-        requirements_for_partnership: data.requirements_for_partnership || undefined,
-        existing_partners: data.existing_partners || undefined,
-        continent: data.continent,
-        country: data.country,
-        foundation_country: data.foundation_country || undefined,
-        membership_duration: data.membership_duration,
       });
 
+      const jwt = regRes.data.jwt;
+
+      // Step 2: Create company profile with all fields
+      await axios.post(
+        `${STRAPI_URL}/api/companies`,
+        {
+          data: {
+            name_of_the_company: data.name_of_the_company,
+            name_of_the_person: data.name_of_the_person,
+            email: data.email,
+            telephone_mobile: data.telephone_mobile || undefined,
+            industry: data.industry || undefined,
+            employee_count: data.employee_count || undefined,
+            website: data.website || undefined,
+            area_of_specification: data.area_of_specification || undefined,
+            short_description: data.short_description || undefined,
+            requirements_for_partnership: data.requirements_for_partnership || undefined,
+            existing_partners: data.existing_partners || undefined,
+            continent: data.continent,
+            country: data.country,
+            foundation_country: data.foundation_country || undefined,
+            membership_duration: data.membership_duration,
+          },
+        },
+        { headers: { Authorization: `Bearer ${jwt}` } }
+      );
+
+      // Step 3: Auto-login
       const result = await signIn("credentials", {
         redirect: false,
         identifier: data.email,
@@ -189,10 +202,10 @@ export function CompanyRegisterForm() {
                 <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="short_description">Short Description</label>
                 <textarea className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="short_description" rows={3} {...register("short_description")}></textarea>
               </div>
-              <div className="mb-3">
+              {/* <div className="mb-3">
                 <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="description">Full Description</label>
                 <textarea className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" id="description" rows={4} {...register("description")}></textarea>
-              </div>
+              </div> */}
 
               {/* Partnership & Revenue */}
               <h2 className="mb-3 mt-4 border-b border-gray-200 pb-2 text-base font-semibold text-gray-900">Partnership &amp; Revenue</h2>

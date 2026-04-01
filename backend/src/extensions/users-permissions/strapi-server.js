@@ -8,41 +8,6 @@ const { ApplicationError, ValidationError } = utils.errors;
 
 const VALID_USER_TYPES = ['company', 'investor', 'expert'];
 
-const REQUIRED_FIELDS = {
-  company: ['name_of_the_company', 'name_of_the_person', 'email'],
-  investor: ['name_of_the_company', 'name_of_the_person', 'email'],
-  expert: ['name_of_the_person', 'email'],
-};
-
-// Fields that belong to each profile content type (not the user)
-const COMPANY_PROFILE_FIELDS = [
-  'name_of_the_company', 'name_of_the_person', 'email', 'telephone_mobile',
-  'industry', 'employee_count', 'website', 'area_of_specification',
-  'short_description', 'description', 'requirements_for_partnership',
-  'existing_partners', 'continent', 'country', 'foundation_country',
-  'membership_duration',
-];
-
-const INVESTOR_PROFILE_FIELDS = [
-  'name_of_the_company', 'name_of_the_person', 'email', 'telephone_mobile',
-  'foundation_year', 'type_of_investor', 'investment_policies',
-  'eligibility_criteria', 'short_description', 'continent', 'country',
-  'location_of_headquarters', 'location_of_branches', 'membership_duration',
-];
-
-const EXPERT_PROFILE_FIELDS = [
-  'name_of_the_person', 'email', 'telephone_mobile', 'date_of_birth',
-  'specialty', 'field_of_expertise', 'specialisation_on_selected_field',
-  'years_of_experience', 'short_description', 'any_other_details',
-  'consultation_fee', 'continent', 'country', 'membership_duration',
-];
-
-const PROFILE_FIELDS_MAP = {
-  company: COMPANY_PROFILE_FIELDS,
-  investor: INVESTOR_PROFILE_FIELDS,
-  expert: EXPERT_PROFILE_FIELDS,
-};
-
 const sanitizeUser = (user, ctx) => {
   const { auth } = ctx.state;
   const userSchema = strapi.getModel('plugin::users-permissions.user');
@@ -71,15 +36,6 @@ module.exports = (plugin) => {
       );
     }
 
-    // Validate required fields per user_type
-    const required = REQUIRED_FIELDS[user_type];
-    const missing = required.filter((field) => !body[field]);
-    if (missing.length > 0) {
-      throw new ValidationError(
-        `Missing required fields for ${user_type}: ${missing.join(', ')}`
-      );
-    }
-
     // --- Run the standard Strapi registration logic ---
     const pluginStore = await strapi.store({ type: 'plugin', name: 'users-permissions' });
     const settings = await pluginStore.get({ key: 'advanced' });
@@ -100,14 +56,16 @@ module.exports = (plugin) => {
       )
     );
 
-    // Build user params
+    // Build user params — only user-level fields
     const params = {
       ..._.pick(body, allowedKeys),
       provider: 'local',
     };
 
-    const validations = strapi.config.get('plugin::users-permissions.validationRules');
+    // Strip non-user fields from ctx.request.body before validation
+    ctx.request.body = params;
 
+    const validations = strapi.config.get('plugin::users-permissions.validationRules');
     const { validateRegisterBody } = require('@strapi/plugin-users-permissions/server/controllers/validation/auth');
     await validateRegisterBody(params, validations);
 
@@ -155,30 +113,11 @@ module.exports = (plugin) => {
       username,
       confirmed: !settings.email_confirmation,
       user_type,
-      display_name: display_name || body.name_of_the_person || username,
+      display_name: display_name || username,
       subscription_status: 'free',
     };
 
     const user = await getService('user').add(newUser);
-
-    // Build profile data from allowed fields for this user_type
-    const allowedProfileFields = PROFILE_FIELDS_MAP[user_type];
-    const profileData = _.pick(body, allowedProfileFields);
-
-    // Add owner relation for company
-    if (user_type === 'company') {
-      profileData.owner = user.id;
-    }
-
-    // Create the profile entry
-    const apiMap = {
-      company: 'api::company.company',
-      investor: 'api::investor.investor',
-      expert: 'api::expert.expert',
-    };
-
-    await strapi.documents(apiMap[user_type]).create({ data: profileData });
-
     const sanitizedUser = await sanitizeUser(user, ctx);
 
     if (settings.email_confirmation) {
