@@ -14,14 +14,30 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "conversationId is required" }, { status: 400 });
   }
 
+  const userId = Number(session.user.id);
+
   try {
-    const res = await strapiGet<unknown[]>("/messages", {
+    const res = await strapiGet<{ id: number; documentId: string; sender?: { id: number }; read?: boolean }[]>("/messages", {
       "filters[conversation][documentId][$eq]": conversationId,
       "populate[sender][fields][0]": "id",
       "populate[sender][fields][1]": "display_name",
       "sort": "createdAt:asc",
       "pagination[pageSize]": 200,
     }, session.jwt);
+
+    // Mark unread messages from the other participant as read
+    const unread = (res.data ?? []).filter(
+      (msg) => msg.sender?.id !== userId && msg.read === false
+    );
+    if (unread.length > 0) {
+      await Promise.allSettled(
+        unread.map((msg) =>
+          strapiPut(`/messages/${msg.documentId}`, { read: true }, session.jwt!).catch((err) =>
+            console.error(`Failed to mark message ${msg.documentId} as read:`, err?.response?.data ?? err)
+          )
+        )
+      );
+    }
 
     return NextResponse.json(res);
   } catch (err) {

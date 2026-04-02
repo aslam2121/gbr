@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 
-const POLL_INTERVAL = 15000; // 15 seconds
+const POLL_INTERVAL = 5000; // 5 seconds
 
 export function useUnreadCount(enabled: boolean) {
   const [count, setCount] = useState(0);

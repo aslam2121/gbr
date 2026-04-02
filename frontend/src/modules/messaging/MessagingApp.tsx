@@ -50,20 +50,7 @@ export function MessagingApp() {
     }
   }, []);
 
-  // Mark messages as read in a conversation
-  const markAsRead = useCallback(async (convoDocId: string) => {
-    try {
-      await fetch("/api/messaging/read", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ conversationId: convoDocId }),
-      });
-    } catch {
-      // silent
-    }
-  }, []);
-
-  // Fetch messages for active conversation
+  // Fetch messages for active conversation (also marks them as read server-side)
   const fetchMessages = useCallback(async (convoDocId: string) => {
     try {
       const res = await fetch(`/api/messaging/messages?conversationId=${convoDocId}`);
@@ -71,12 +58,10 @@ export function MessagingApp() {
       if (res.ok) {
         setMessages(json.data ?? []);
       }
-      // Mark messages as read after fetching
-      await markAsRead(convoDocId);
     } catch {
       // silent
     }
-  }, [markAsRead]);
+  }, []);
 
   // Initial load
   useEffect(() => {
