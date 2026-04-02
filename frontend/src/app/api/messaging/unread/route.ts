@@ -9,23 +9,38 @@ export async function GET() {
     return NextResponse.json({ count: 0 });
   }
 
-  const userId = session.user.id;
+  const userId = Number(session.user.id);
 
   try {
-    // Find messages where: sender is NOT me, read is false,
-    // and conversation involves me (participant_one or participant_two)
-    const res = await strapiGet<unknown[]>("/messages", {
-      "filters[sender][id][$ne]": userId,
-      "filters[read][$eq]": false,
-      "filters[$or][0][conversation][participant_one][id][$eq]": userId,
-      "filters[$or][1][conversation][participant_two][id][$eq]": userId,
-      "pagination[pageSize]": 1,
-      "pagination[withCount]": true,
+    // Step 1: Get the user's conversation documentIds
+    const convos = await strapiGet<{ documentId: string }[]>("/conversations", {
+      "filters[$or][0][participant_one][id][$eq]": userId,
+      "filters[$or][1][participant_two][id][$eq]": userId,
+      "fields[0]": "documentId",
+      "pagination[pageSize]": 100,
     }, session.jwt);
 
-    const count = res.meta?.pagination?.total ?? 0;
-    return NextResponse.json({ count });
-  } catch {
+    const convoIds = (convos.data ?? []).map((c) => c.documentId);
+    if (convoIds.length === 0) {
+      return NextResponse.json({ count: 0 });
+    }
+
+    // Step 2: Count unread messages in those conversations not sent by me
+    let totalUnread = 0;
+    for (const convoId of convoIds) {
+      const res = await strapiGet<unknown[]>("/messages", {
+        "filters[conversation][documentId][$eq]": convoId,
+        "filters[sender][id][$ne]": userId,
+        "filters[read][$eq]": false,
+        "pagination[pageSize]": 1,
+        "pagination[withCount]": true,
+      }, session.jwt);
+      totalUnread += res.meta?.pagination?.total ?? 0;
+    }
+
+    return NextResponse.json({ count: totalUnread });
+  } catch (err) {
+    console.error("Unread count error:", err);
     return NextResponse.json({ count: 0 });
   }
 }
