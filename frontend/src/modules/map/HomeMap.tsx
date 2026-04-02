@@ -89,12 +89,19 @@ export default function HomeMap() {
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return;
 
+    const worldBounds = L.latLngBounds(
+      L.latLng(-85, -180),
+      L.latLng(85, 180)
+    );
+
     const map = L.map(mapRef.current, {
       minZoom: 2,
       maxZoom: 12,
       zoomControl: true,
       attributionControl: false,
-    }).setView([40, 0], 2);
+      maxBounds: worldBounds,
+      maxBoundsViscosity: 1.0,
+    }).setView([30, 0], 2);
 
     mapInstanceRef.current = map;
 
@@ -301,5 +308,5 @@ export default function HomeMap() {
     };
   }, []);
 
-  return <div ref={mapRef} style={{ height: "800px", border: "2px solid #ccc" }} />;
+  return <div ref={mapRef} style={{ height: "800px" }} />;
 }
