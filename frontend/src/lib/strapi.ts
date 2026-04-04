@@ -69,6 +69,14 @@ export async function strapiPut<T>(
   return res.data;
 }
 
+// Custom auth registration — sends flat body (not wrapped in { data })
+export async function strapiRegister(
+  body: Record<string, unknown>
+): Promise<{ jwt: string; user: Record<string, unknown> }> {
+  const res = await api.post("/custom-auth/register", body);
+  return res.data;
+}
+
 // Helper to extract JWT from a NextAuth session object
 export function getTokenFromSession(session: { jwt?: string } | null): string | undefined {
   return session?.jwt ?? undefined;

@@ -1,7 +1,7 @@
 import "next-auth";
 import "next-auth/jwt";
 
-type UserType = "company" | "investor" | "expert";
+export type UserType = "company" | "investor" | "expert";
 
 declare module "next-auth" {
   interface User {

@@ -5,12 +5,10 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import axios from "axios";
+import { AxiosError } from "axios";
 import { COUNTRIES, CONTINENTS_WITH_ANTARCTICA } from "@/lib/countries";
-
-const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
-
-type UserType = "company" | "investor" | "expert";
+import { strapiRegister } from "@/lib/strapi";
+import type { UserType } from "@/types/next-auth";
 
 interface RegisterFormData {
   // Account
@@ -86,6 +84,7 @@ export function DynamicRegisterForm() {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<RegisterFormData>({ defaultValues: { user_type: "company" } });
 
@@ -101,39 +100,35 @@ export function DynamicRegisterForm() {
           ? data.name_of_the_person
           : data.name_of_the_company || data.name_of_the_person;
 
-      const regRes = await axios.post(`${STRAPI_URL}/api/auth/local/register`, {
+      // Single request — backend creates user + profile
+      const regRes = await strapiRegister({
         username: data.email.split("@")[0] + "_" + Date.now(),
         email: data.email,
         password: data.password,
         user_type: data.user_type,
         display_name: displayName,
-        // Profile fields
         continent: data.continent,
         name_of_the_person: data.name_of_the_person,
         telephone_mobile: data.telephone_mobile || undefined,
         short_description: data.short_description || undefined,
         membership_duration: data.membership_duration,
         country: data.country || undefined,
-        // Company + Investor
         ...(data.user_type !== "expert" && {
           name_of_the_company: data.name_of_the_company || undefined,
           foundation_year: data.foundation_year ? parseInt(data.foundation_year) : undefined,
           location_of_headquarters: data.location_of_headquarters || undefined,
           location_of_branches: data.location_of_branches || undefined,
         }),
-        // Company only
         ...(data.user_type === "company" && {
           area_of_specification: data.area_of_specification || undefined,
           requirements_for_partnership: data.requirements_for_partnership || undefined,
           existing_partners: data.existing_partners || undefined,
         }),
-        // Investor only
         ...(data.user_type === "investor" && {
           type_of_investor: data.type_of_investor || undefined,
           investment_policies: data.investment_policies || undefined,
           eligibility_criteria: data.eligibility_criteria || undefined,
         }),
-        // Expert only
         ...(data.user_type === "expert" && {
           date_of_birth: data.date_of_birth || undefined,
           field_of_expertise: data.field_of_expertise || undefined,
@@ -145,7 +140,7 @@ export function DynamicRegisterForm() {
         }),
       });
 
-      if (!regRes.data.jwt) {
+      if (!regRes.jwt) {
         setError("Registration failed. Please try again.");
         return;
       }
@@ -162,7 +157,7 @@ export function DynamicRegisterForm() {
       }
       router.push("/dashboard");
     } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
+      if (err instanceof AxiosError) {
         setError(err.response?.data?.error?.message || "Registration failed. Please try again.");
       } else {
         setError("Registration failed. Please try again.");
@@ -196,14 +191,16 @@ export function DynamicRegisterForm() {
 
           <div>
             <label className={labelClass}>Continent *</label>
+            <input type="hidden" {...register("continent", { required: "Continent is required" })} />
             {/* Desktop: radio buttons */}
             <div className="hidden md:flex md:flex-wrap md:gap-4">
               {CONTINENTS_WITH_ANTARCTICA.map((c) => (
                 <label key={c} className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-700">
                   <input
                     type="radio"
+                    name="continent_desktop"
                     value={c}
-                    {...register("continent", { required: "Continent is required" })}
+                    onChange={() => setValue("continent", c, { shouldValidate: true })}
                     className="h-4 w-4 text-gbr-primary focus:ring-gbr-accent"
                   />
                   {c === "North America" ? "N. America" : c === "South America" ? "S. America" : c}
@@ -214,7 +211,8 @@ export function DynamicRegisterForm() {
             <div className="md:hidden">
               <select
                 className={selectClass(errors.continent)}
-                {...register("continent", { required: "Continent is required" })}
+                defaultValue=""
+                onChange={(e) => setValue("continent", e.target.value, { shouldValidate: true })}
               >
                 <option value="" disabled>Select continent</option>
                 {CONTINENTS_WITH_ANTARCTICA.map((c) => (
@@ -422,14 +420,16 @@ export function DynamicRegisterForm() {
 
               <div className="mb-3">
                 <label className={labelClass}>Field of Expertise</label>
-                {/* Desktop: checkboxes */}
+                <input type="hidden" {...register("field_of_expertise")} />
+                {/* Desktop: radio buttons */}
                 <div className="hidden md:flex md:flex-wrap md:gap-4">
                   {EXPERTISE_OPTIONS.map((e) => (
                     <label key={e} className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-700">
                       <input
                         type="radio"
+                        name="expertise_desktop"
                         value={e}
-                        {...register("field_of_expertise")}
+                        onChange={() => setValue("field_of_expertise", e)}
                         className="h-4 w-4 text-gbr-primary focus:ring-gbr-accent"
                       />
                       {e}
@@ -438,7 +438,11 @@ export function DynamicRegisterForm() {
                 </div>
                 {/* Mobile: dropdown */}
                 <div className="md:hidden">
-                  <select className={selectClass()} defaultValue="" {...register("field_of_expertise")}>
+                  <select
+                    className={selectClass()}
+                    defaultValue=""
+                    onChange={(e) => setValue("field_of_expertise", e.target.value)}
+                  >
                     <option value="" disabled>Select field</option>
                     {EXPERTISE_OPTIONS.map((e) => <option key={e}>{e}</option>)}
                   </select>
@@ -495,6 +499,7 @@ export function DynamicRegisterForm() {
           {/* Membership Duration */}
           <section className="mt-4">
             <h2 className="mb-3 border-b border-gray-200 pb-2 text-lg font-semibold text-gray-900">Membership Duration</h2>
+            <input type="hidden" {...register("membership_duration", { required: "Membership duration is required" })} />
             {/* Desktop: radio buttons */}
             <div className="hidden md:flex md:flex-wrap md:gap-4">
               {[
@@ -505,8 +510,9 @@ export function DynamicRegisterForm() {
                 <label key={m.value} className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-700">
                   <input
                     type="radio"
+                    name="membership_desktop"
                     value={m.value}
-                    {...register("membership_duration", { required: "Membership duration is required" })}
+                    onChange={() => setValue("membership_duration", m.value, { shouldValidate: true })}
                     className="h-4 w-4 text-gbr-primary focus:ring-gbr-accent"
                   />
                   {m.label}
@@ -518,7 +524,7 @@ export function DynamicRegisterForm() {
               <select
                 className={selectClass(errors.membership_duration)}
                 defaultValue=""
-                {...register("membership_duration", { required: "Membership duration is required" })}
+                onChange={(e) => setValue("membership_duration", e.target.value, { shouldValidate: true })}
               >
                 <option value="" disabled>Select duration</option>
                 <option value="One Year">1 Year</option>
