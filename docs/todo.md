@@ -25,16 +25,17 @@
 - [x] Picks all profile fields (common + type-specific) from original request body
 - [x] Creates user-profile with owner relation to newly created user
 
-### Phase 4: Update frontend types and auth
+### Phase 4: Update frontend types and auth — PARTIAL
 - [ ] Update frontend/src/types/ — replace Company/Investor/Expert types with unified UserProfile type
-- [ ] Update frontend/src/types/next-auth.d.ts (UserType enum stays same)
+- [x] frontend/src/types/next-auth.d.ts — UserType enum stays same, no change needed
 - [ ] Update frontend/src/lib/auth.ts if needed
 
-### Phase 5: Replace registration forms
-- [ ] Delete CompanyRegisterForm.tsx, InvestorRegisterForm.tsx, ExpertRegisterForm.tsx
-- [ ] Implement new dynamic registration form (user has template ready)
-- [ ] Update frontend/src/app/(auth)/register/ routes
-- [ ] Update frontend/src/modules/auth/index.ts barrel export
+### Phase 5: Replace registration forms — DONE (2026-04-04)
+- [x] Deleted CompanyRegisterForm.tsx, InvestorRegisterForm.tsx, ExpertRegisterForm.tsx
+- [x] Created DynamicRegisterForm.tsx — single form with user_type dropdown, shows/hides sections
+- [x] Replaced /register page to use DynamicRegisterForm directly (no more card selection)
+- [x] Deleted /register/company, /register/investor, /register/expert sub-routes
+- [x] Updated modules/auth/index.ts barrel export
 
 ### Phase 6: Rewire all dependent features (43 files total)
 - [ ] Dashboard: DashboardLayout.tsx, dashboard/page.tsx, SubscriptionManager.tsx
