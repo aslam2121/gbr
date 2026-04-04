@@ -482,505 +482,6 @@ export interface ApiCallRoomCallRoom extends Struct.CollectionTypeSchema {
   };
 }
 
-export interface ApiCompanyCompany extends Struct.CollectionTypeSchema {
-  collectionName: 'companies';
-  info: {
-    description: 'Company profile linked to a user';
-    displayName: 'Company';
-    pluralName: 'companies';
-    singularName: 'company';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    annual_revenue_data: Schema.Attribute.Media<'files', true>;
-    area_of_specification: Schema.Attribute.Enumeration<
-      [
-        'Health',
-        'Financial services',
-        'IT',
-        'Consumer products and services',
-        'Logistics and Transportation',
-        'Business products and services',
-        'Construction and real estate',
-        'Trading',
-        'Manufacturing',
-        'Advertising and marketing',
-        'Agriculture',
-      ]
-    >;
-    continent: Schema.Attribute.Enumeration<
-      [
-        'Africa',
-        'Antarctica',
-        'Asia',
-        'Europe',
-        'North America',
-        'Oceania',
-        'South America',
-      ]
-    > &
-      Schema.Attribute.Required;
-    country: Schema.Attribute.Enumeration<
-      [
-        'Afghanistan',
-        'Albania',
-        'Algeria',
-        'Andorra',
-        'Angola',
-        'Antigua & Deps',
-        'Argentina',
-        'Armenia',
-        'Australia',
-        'Austria',
-        'Azerbaijan',
-        'Bahamas',
-        'Bahrain',
-        'Bangladesh',
-        'Barbados',
-        'Belarus',
-        'Belgium',
-        'Belize',
-        'Benin',
-        'Bhutan',
-        'Bolivia',
-        'Bosnia Herzegovina',
-        'Botswana',
-        'Brazil',
-        'Brunei',
-        'Bulgaria',
-        'Burkina',
-        'Burundi',
-        'Cambodia',
-        'Cameroon',
-        'Canada',
-        'Cape Verde',
-        'Central African Rep',
-        'Chad',
-        'Chile',
-        'China',
-        'Colombia',
-        'Comoros',
-        'Congo',
-        'Congo {Democratic Rep}',
-        'Costa Rica',
-        'Croatia',
-        'Cuba',
-        'Cyprus',
-        'Czech Republic',
-        'Denmark',
-        'Djibouti',
-        'Dominica',
-        'Dominican Republic',
-        'East Timor',
-        'Ecuador',
-        'Egypt',
-        'El Salvador',
-        'Equatorial Guinea',
-        'Eritrea',
-        'Estonia',
-        'Ethiopia',
-        'Fiji',
-        'Finland',
-        'France',
-        'Gabon',
-        'Gambia',
-        'Georgia',
-        'Germany',
-        'Ghana',
-        'Greece',
-        'Grenada',
-        'Guatemala',
-        'Guinea',
-        'Guinea-Bissau',
-        'Guyana',
-        'Haiti',
-        'Honduras',
-        'Hungary',
-        'Iceland',
-        'India',
-        'Indonesia',
-        'Iran',
-        'Iraq',
-        'Ireland {Republic}',
-        'Israel',
-        'Italy',
-        'Ivory Coast',
-        'Jamaica',
-        'Japan',
-        'Jordan',
-        'Kazakhstan',
-        'Kenya',
-        'Kiribati',
-        'Korea North',
-        'Korea South',
-        'Kosovo',
-        'Kuwait',
-        'Kyrgyzstan',
-        'Laos',
-        'Latvia',
-        'Lebanon',
-        'Lesotho',
-        'Liberia',
-        'Libya',
-        'Liechtenstein',
-        'Lithuania',
-        'Luxembourg',
-        'Macedonia',
-        'Madagascar',
-        'Malawi',
-        'Malaysia',
-        'Maldives',
-        'Mali',
-        'Malta',
-        'Marshall Islands',
-        'Mauritania',
-        'Mauritius',
-        'Mexico',
-        'Micronesia',
-        'Moldova',
-        'Monaco',
-        'Mongolia',
-        'Montenegro',
-        'Morocco',
-        'Mozambique',
-        'Myanmar, {Burma}',
-        'Namibia',
-        'Nauru',
-        'Nepal',
-        'Netherlands',
-        'New Zealand',
-        'Nicaragua',
-        'Niger',
-        'Nigeria',
-        'Norway',
-        'Oman',
-        'Pakistan',
-        'Palau',
-        'Panama',
-        'Papua New Guinea',
-        'Paraguay',
-        'Peru',
-        'Philippines',
-        'Poland',
-        'Portugal',
-        'Qatar',
-        'Romania',
-        'Russian Federation',
-        'Rwanda',
-        'St Kitts & Nevis',
-        'St Lucia',
-        'Saint Vincent & the Grenadines',
-        'Samoa',
-        'San Marino',
-        'Sao Tome & Principe',
-        'Saudi Arabia',
-        'Senegal',
-        'Serbia',
-        'Seychelles',
-        'Sierra Leone',
-        'Singapore',
-        'Slovakia',
-        'Slovenia',
-        'Solomon Islands',
-        'Somalia',
-        'South Africa',
-        'South Sudan',
-        'Spain',
-        'Sri Lanka',
-        'Sudan',
-        'Suriname',
-        'Swaziland',
-        'Sweden',
-        'Switzerland',
-        'Syria',
-        'Taiwan',
-        'Tajikistan',
-        'Tanzania',
-        'Thailand',
-        'Togo',
-        'Tonga',
-        'Trinidad & Tobago',
-        'Tunisia',
-        'Turkey',
-        'Turkmenistan',
-        'Tuvalu',
-        'Uganda',
-        'Ukraine',
-        'United Arab Emirates',
-        'United Kingdom',
-        'United States',
-        'Uruguay',
-        'Uzbekistan',
-        'Vanuatu',
-        'Vatican City',
-        'Venezuela',
-        'Vietnam',
-        'Yemen',
-        'Zambia',
-        'Zimbabwe',
-      ]
-    > &
-      Schema.Attribute.Required;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    email: Schema.Attribute.Email &
-      Schema.Attribute.Required &
-      Schema.Attribute.Unique;
-    employee_count: Schema.Attribute.Enumeration<
-      ['s_1_10', 's_11_50', 's_51_200', 's_201_500', 's_500_plus']
-    >;
-    existing_partners: Schema.Attribute.String;
-    foundation_country: Schema.Attribute.Enumeration<
-      [
-        'Afghanistan',
-        'Albania',
-        'Algeria',
-        'Andorra',
-        'Angola',
-        'Antigua & Deps',
-        'Argentina',
-        'Armenia',
-        'Australia',
-        'Austria',
-        'Azerbaijan',
-        'Bahamas',
-        'Bahrain',
-        'Bangladesh',
-        'Barbados',
-        'Belarus',
-        'Belgium',
-        'Belize',
-        'Benin',
-        'Bhutan',
-        'Bolivia',
-        'Bosnia Herzegovina',
-        'Botswana',
-        'Brazil',
-        'Brunei',
-        'Bulgaria',
-        'Burkina',
-        'Burundi',
-        'Cambodia',
-        'Cameroon',
-        'Canada',
-        'Cape Verde',
-        'Central African Rep',
-        'Chad',
-        'Chile',
-        'China',
-        'Colombia',
-        'Comoros',
-        'Congo',
-        'Congo {Democratic Rep}',
-        'Costa Rica',
-        'Croatia',
-        'Cuba',
-        'Cyprus',
-        'Czech Republic',
-        'Denmark',
-        'Djibouti',
-        'Dominica',
-        'Dominican Republic',
-        'East Timor',
-        'Ecuador',
-        'Egypt',
-        'El Salvador',
-        'Equatorial Guinea',
-        'Eritrea',
-        'Estonia',
-        'Ethiopia',
-        'Fiji',
-        'Finland',
-        'France',
-        'Gabon',
-        'Gambia',
-        'Georgia',
-        'Germany',
-        'Ghana',
-        'Greece',
-        'Grenada',
-        'Guatemala',
-        'Guinea',
-        'Guinea-Bissau',
-        'Guyana',
-        'Haiti',
-        'Honduras',
-        'Hungary',
-        'Iceland',
-        'India',
-        'Indonesia',
-        'Iran',
-        'Iraq',
-        'Ireland {Republic}',
-        'Israel',
-        'Italy',
-        'Ivory Coast',
-        'Jamaica',
-        'Japan',
-        'Jordan',
-        'Kazakhstan',
-        'Kenya',
-        'Kiribati',
-        'Korea North',
-        'Korea South',
-        'Kosovo',
-        'Kuwait',
-        'Kyrgyzstan',
-        'Laos',
-        'Latvia',
-        'Lebanon',
-        'Lesotho',
-        'Liberia',
-        'Libya',
-        'Liechtenstein',
-        'Lithuania',
-        'Luxembourg',
-        'Macedonia',
-        'Madagascar',
-        'Malawi',
-        'Malaysia',
-        'Maldives',
-        'Mali',
-        'Malta',
-        'Marshall Islands',
-        'Mauritania',
-        'Mauritius',
-        'Mexico',
-        'Micronesia',
-        'Moldova',
-        'Monaco',
-        'Mongolia',
-        'Montenegro',
-        'Morocco',
-        'Mozambique',
-        'Myanmar, {Burma}',
-        'Namibia',
-        'Nauru',
-        'Nepal',
-        'Netherlands',
-        'New Zealand',
-        'Nicaragua',
-        'Niger',
-        'Nigeria',
-        'Norway',
-        'Oman',
-        'Pakistan',
-        'Palau',
-        'Panama',
-        'Papua New Guinea',
-        'Paraguay',
-        'Peru',
-        'Philippines',
-        'Poland',
-        'Portugal',
-        'Qatar',
-        'Romania',
-        'Russian Federation',
-        'Rwanda',
-        'St Kitts & Nevis',
-        'St Lucia',
-        'Saint Vincent & the Grenadines',
-        'Samoa',
-        'San Marino',
-        'Sao Tome & Principe',
-        'Saudi Arabia',
-        'Senegal',
-        'Serbia',
-        'Seychelles',
-        'Sierra Leone',
-        'Singapore',
-        'Slovakia',
-        'Slovenia',
-        'Solomon Islands',
-        'Somalia',
-        'South Africa',
-        'South Sudan',
-        'Spain',
-        'Sri Lanka',
-        'Sudan',
-        'Suriname',
-        'Swaziland',
-        'Sweden',
-        'Switzerland',
-        'Syria',
-        'Taiwan',
-        'Tajikistan',
-        'Tanzania',
-        'Thailand',
-        'Togo',
-        'Tonga',
-        'Trinidad & Tobago',
-        'Tunisia',
-        'Turkey',
-        'Turkmenistan',
-        'Tuvalu',
-        'Uganda',
-        'Ukraine',
-        'United Arab Emirates',
-        'United Kingdom',
-        'United States',
-        'Uruguay',
-        'Uzbekistan',
-        'Vanuatu',
-        'Vatican City',
-        'Venezuela',
-        'Vietnam',
-        'Yemen',
-        'Zambia',
-        'Zimbabwe',
-      ]
-    >;
-    industry: Schema.Attribute.Enumeration<
-      [
-        'tech',
-        'finance',
-        'healthcare',
-        'energy',
-        'manufacturing',
-        'logistics',
-        'education',
-        'other',
-      ]
-    >;
-    latitude: Schema.Attribute.Float;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::company.company'
-    > &
-      Schema.Attribute.Private;
-    logo: Schema.Attribute.Media<'images'>;
-    longitude: Schema.Attribute.Float;
-    membership_duration: Schema.Attribute.Enumeration<
-      ['year 1', 'years 2', 'years 3']
-    >;
-    name_of_the_company: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 255;
-      }>;
-    name_of_the_person: Schema.Attribute.String & Schema.Attribute.Required;
-    owner: Schema.Attribute.Relation<
-      'manyToOne',
-      'plugin::users-permissions.user'
-    >;
-    publishedAt: Schema.Attribute.DateTime;
-    requirements_for_partnership: Schema.Attribute.Text;
-    short_description: Schema.Attribute.Text;
-    telephone_mobile: Schema.Attribute.BigInteger;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    website: Schema.Attribute.String &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 255;
-      }>;
-  };
-}
-
 export interface ApiConversationConversation
   extends Struct.CollectionTypeSchema {
   collectionName: 'conversations';
@@ -1017,532 +518,6 @@ export interface ApiConversationConversation
     > &
       Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-  };
-}
-
-export interface ApiExpertExpert extends Struct.CollectionTypeSchema {
-  collectionName: 'experts';
-  info: {
-    description: 'Expert profile linked to a user';
-    displayName: 'Expert';
-    pluralName: 'experts';
-    singularName: 'expert';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    any_other_details: Schema.Attribute.Text;
-    consultation_fee: Schema.Attribute.Decimal;
-    continent: Schema.Attribute.Enumeration<
-      [
-        'Africa',
-        'Antarctica',
-        'Asia',
-        'Europe',
-        'North America',
-        'Oceania',
-        'South America',
-      ]
-    > &
-      Schema.Attribute.Required;
-    country: Schema.Attribute.Enumeration<
-      [
-        'Afghanistan',
-        'Albania',
-        'Algeria',
-        'Andorra',
-        'Angola',
-        'Antigua & Deps',
-        'Argentina',
-        'Armenia',
-        'Australia',
-        'Austria',
-        'Azerbaijan',
-        'Bahamas',
-        'Bahrain',
-        'Bangladesh',
-        'Barbados',
-        'Belarus',
-        'Belgium',
-        'Belize',
-        'Benin',
-        'Bhutan',
-        'Bolivia',
-        'Bosnia Herzegovina',
-        'Botswana',
-        'Brazil',
-        'Brunei',
-        'Bulgaria',
-        'Burkina',
-        'Burundi',
-        'Cambodia',
-        'Cameroon',
-        'Canada',
-        'Cape Verde',
-        'Central African Rep',
-        'Chad',
-        'Chile',
-        'China',
-        'Colombia',
-        'Comoros',
-        'Congo',
-        'Congo {Democratic Rep}',
-        'Costa Rica',
-        'Croatia',
-        'Cuba',
-        'Cyprus',
-        'Czech Republic',
-        'Denmark',
-        'Djibouti',
-        'Dominica',
-        'Dominican Republic',
-        'East Timor',
-        'Ecuador',
-        'Egypt',
-        'El Salvador',
-        'Equatorial Guinea',
-        'Eritrea',
-        'Estonia',
-        'Ethiopia',
-        'Fiji',
-        'Finland',
-        'France',
-        'Gabon',
-        'Gambia',
-        'Georgia',
-        'Germany',
-        'Ghana',
-        'Greece',
-        'Grenada',
-        'Guatemala',
-        'Guinea',
-        'Guinea-Bissau',
-        'Guyana',
-        'Haiti',
-        'Honduras',
-        'Hungary',
-        'Iceland',
-        'India',
-        'Indonesia',
-        'Iran',
-        'Iraq',
-        'Ireland {Republic}',
-        'Israel',
-        'Italy',
-        'Ivory Coast',
-        'Jamaica',
-        'Japan',
-        'Jordan',
-        'Kazakhstan',
-        'Kenya',
-        'Kiribati',
-        'Korea North',
-        'Korea South',
-        'Kosovo',
-        'Kuwait',
-        'Kyrgyzstan',
-        'Laos',
-        'Latvia',
-        'Lebanon',
-        'Lesotho',
-        'Liberia',
-        'Libya',
-        'Liechtenstein',
-        'Lithuania',
-        'Luxembourg',
-        'Macedonia',
-        'Madagascar',
-        'Malawi',
-        'Malaysia',
-        'Maldives',
-        'Mali',
-        'Malta',
-        'Marshall Islands',
-        'Mauritania',
-        'Mauritius',
-        'Mexico',
-        'Micronesia',
-        'Moldova',
-        'Monaco',
-        'Mongolia',
-        'Montenegro',
-        'Morocco',
-        'Mozambique',
-        'Myanmar, {Burma}',
-        'Namibia',
-        'Nauru',
-        'Nepal',
-        'Netherlands',
-        'New Zealand',
-        'Nicaragua',
-        'Niger',
-        'Nigeria',
-        'Norway',
-        'Oman',
-        'Pakistan',
-        'Palau',
-        'Panama',
-        'Papua New Guinea',
-        'Paraguay',
-        'Peru',
-        'Philippines',
-        'Poland',
-        'Portugal',
-        'Qatar',
-        'Romania',
-        'Russian Federation',
-        'Rwanda',
-        'St Kitts & Nevis',
-        'St Lucia',
-        'Saint Vincent & the Grenadines',
-        'Samoa',
-        'San Marino',
-        'Sao Tome & Principe',
-        'Saudi Arabia',
-        'Senegal',
-        'Serbia',
-        'Seychelles',
-        'Sierra Leone',
-        'Singapore',
-        'Slovakia',
-        'Slovenia',
-        'Solomon Islands',
-        'Somalia',
-        'South Africa',
-        'South Sudan',
-        'Spain',
-        'Sri Lanka',
-        'Sudan',
-        'Suriname',
-        'Swaziland',
-        'Sweden',
-        'Switzerland',
-        'Syria',
-        'Taiwan',
-        'Tajikistan',
-        'Tanzania',
-        'Thailand',
-        'Togo',
-        'Tonga',
-        'Trinidad & Tobago',
-        'Tunisia',
-        'Turkey',
-        'Turkmenistan',
-        'Tuvalu',
-        'Uganda',
-        'Ukraine',
-        'United Arab Emirates',
-        'United Kingdom',
-        'United States',
-        'Uruguay',
-        'Uzbekistan',
-        'Vanuatu',
-        'Vatican City',
-        'Venezuela',
-        'Vietnam',
-        'Yemen',
-        'Zambia',
-        'Zimbabwe',
-      ]
-    > &
-      Schema.Attribute.Required;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    cv_biography: Schema.Attribute.Media<'images' | 'files', true>;
-    date_of_birth: Schema.Attribute.Date;
-    email: Schema.Attribute.Email & Schema.Attribute.Required;
-    field_of_expertise: Schema.Attribute.Enumeration<
-      ['Economics', 'Politics', 'Law']
-    >;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::expert.expert'
-    > &
-      Schema.Attribute.Private;
-    membership_duration: Schema.Attribute.Enumeration<
-      ['year 1', 'years 2', 'years 3']
-    >;
-    name_of_the_person: Schema.Attribute.String & Schema.Attribute.Required;
-    publishedAt: Schema.Attribute.DateTime;
-    short_description: Schema.Attribute.Text;
-    slug: Schema.Attribute.UID;
-    specialisation_on_selected_field: Schema.Attribute.String;
-    specialty: Schema.Attribute.String &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 255;
-      }>;
-    telephone_mobile: Schema.Attribute.BigInteger;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    years_of_experience: Schema.Attribute.Integer;
-  };
-}
-
-export interface ApiInvestorInvestor extends Struct.CollectionTypeSchema {
-  collectionName: 'investors';
-  info: {
-    description: 'Investor profile linked to a user';
-    displayName: 'Investor';
-    pluralName: 'investors';
-    singularName: 'investor';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    continent: Schema.Attribute.Enumeration<
-      [
-        'Africa',
-        'Antarctica',
-        'Asia',
-        'Europe',
-        'North America',
-        'Oceania',
-        'South America',
-      ]
-    > &
-      Schema.Attribute.Required;
-    country: Schema.Attribute.Enumeration<
-      [
-        'Afghanistan',
-        'Albania',
-        'Algeria',
-        'Andorra',
-        'Angola',
-        'Antigua & Deps',
-        'Argentina',
-        'Armenia',
-        'Australia',
-        'Austria',
-        'Azerbaijan',
-        'Bahamas',
-        'Bahrain',
-        'Bangladesh',
-        'Barbados',
-        'Belarus',
-        'Belgium',
-        'Belize',
-        'Benin',
-        'Bhutan',
-        'Bolivia',
-        'Bosnia Herzegovina',
-        'Botswana',
-        'Brazil',
-        'Brunei',
-        'Bulgaria',
-        'Burkina',
-        'Burundi',
-        'Cambodia',
-        'Cameroon',
-        'Canada',
-        'Cape Verde',
-        'Central African Rep',
-        'Chad',
-        'Chile',
-        'China',
-        'Colombia',
-        'Comoros',
-        'Congo',
-        'Congo {Democratic Rep}',
-        'Costa Rica',
-        'Croatia',
-        'Cuba',
-        'Cyprus',
-        'Czech Republic',
-        'Denmark',
-        'Djibouti',
-        'Dominica',
-        'Dominican Republic',
-        'East Timor',
-        'Ecuador',
-        'Egypt',
-        'El Salvador',
-        'Equatorial Guinea',
-        'Eritrea',
-        'Estonia',
-        'Ethiopia',
-        'Fiji',
-        'Finland',
-        'France',
-        'Gabon',
-        'Gambia',
-        'Georgia',
-        'Germany',
-        'Ghana',
-        'Greece',
-        'Grenada',
-        'Guatemala',
-        'Guinea',
-        'Guinea-Bissau',
-        'Guyana',
-        'Haiti',
-        'Honduras',
-        'Hungary',
-        'Iceland',
-        'India',
-        'Indonesia',
-        'Iran',
-        'Iraq',
-        'Ireland {Republic}',
-        'Israel',
-        'Italy',
-        'Ivory Coast',
-        'Jamaica',
-        'Japan',
-        'Jordan',
-        'Kazakhstan',
-        'Kenya',
-        'Kiribati',
-        'Korea North',
-        'Korea South',
-        'Kosovo',
-        'Kuwait',
-        'Kyrgyzstan',
-        'Laos',
-        'Latvia',
-        'Lebanon',
-        'Lesotho',
-        'Liberia',
-        'Libya',
-        'Liechtenstein',
-        'Lithuania',
-        'Luxembourg',
-        'Macedonia',
-        'Madagascar',
-        'Malawi',
-        'Malaysia',
-        'Maldives',
-        'Mali',
-        'Malta',
-        'Marshall Islands',
-        'Mauritania',
-        'Mauritius',
-        'Mexico',
-        'Micronesia',
-        'Moldova',
-        'Monaco',
-        'Mongolia',
-        'Montenegro',
-        'Morocco',
-        'Mozambique',
-        'Myanmar, {Burma}',
-        'Namibia',
-        'Nauru',
-        'Nepal',
-        'Netherlands',
-        'New Zealand',
-        'Nicaragua',
-        'Niger',
-        'Nigeria',
-        'Norway',
-        'Oman',
-        'Pakistan',
-        'Palau',
-        'Panama',
-        'Papua New Guinea',
-        'Paraguay',
-        'Peru',
-        'Philippines',
-        'Poland',
-        'Portugal',
-        'Qatar',
-        'Romania',
-        'Russian Federation',
-        'Rwanda',
-        'St Kitts & Nevis',
-        'St Lucia',
-        'Saint Vincent & the Grenadines',
-        'Samoa',
-        'San Marino',
-        'Sao Tome & Principe',
-        'Saudi Arabia',
-        'Senegal',
-        'Serbia',
-        'Seychelles',
-        'Sierra Leone',
-        'Singapore',
-        'Slovakia',
-        'Slovenia',
-        'Solomon Islands',
-        'Somalia',
-        'South Africa',
-        'South Sudan',
-        'Spain',
-        'Sri Lanka',
-        'Sudan',
-        'Suriname',
-        'Swaziland',
-        'Sweden',
-        'Switzerland',
-        'Syria',
-        'Taiwan',
-        'Tajikistan',
-        'Tanzania',
-        'Thailand',
-        'Togo',
-        'Tonga',
-        'Trinidad & Tobago',
-        'Tunisia',
-        'Turkey',
-        'Turkmenistan',
-        'Tuvalu',
-        'Uganda',
-        'Ukraine',
-        'United Arab Emirates',
-        'United Kingdom',
-        'United States',
-        'Uruguay',
-        'Uzbekistan',
-        'Vanuatu',
-        'Vatican City',
-        'Venezuela',
-        'Vietnam',
-        'Yemen',
-        'Zambia',
-        'Zimbabwe',
-      ]
-    > &
-      Schema.Attribute.Required;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    eligibility_criteria: Schema.Attribute.Text;
-    email: Schema.Attribute.Email & Schema.Attribute.Required;
-    foundation_year: Schema.Attribute.Integer;
-    investment_policies: Schema.Attribute.Text;
-    investment_policies_file: Schema.Attribute.Media<'files', true>;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::investor.investor'
-    > &
-      Schema.Attribute.Private;
-    location_of_branches: Schema.Attribute.String;
-    location_of_headquarters: Schema.Attribute.String;
-    membership_duration: Schema.Attribute.Enumeration<
-      ['year 1', 'years 2', 'years 3']
-    >;
-    name_of_the_company: Schema.Attribute.String & Schema.Attribute.Required;
-    name_of_the_person: Schema.Attribute.String & Schema.Attribute.Required;
-    publishedAt: Schema.Attribute.DateTime;
-    short_description: Schema.Attribute.Text;
-    telephone_mobile: Schema.Attribute.BigInteger;
-    type_of_investor: Schema.Attribute.Enumeration<
-      [
-        'Private equity firms',
-        'Venture capital firms',
-        'Private investors',
-        'Angel investors',
-        'Business lenders',
-      ]
-    >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1638,6 +613,300 @@ export interface ApiSubscriptionPlanSubscriptionPlan
       Schema.Attribute.Private;
     user_type: Schema.Attribute.Enumeration<['company', 'investor', 'expert']> &
       Schema.Attribute.Required;
+  };
+}
+
+export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
+  collectionName: 'user_profiles';
+  info: {
+    displayName: 'User Profile';
+    pluralName: 'user-profiles';
+    singularName: 'user-profile';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    annual_revenue_data: Schema.Attribute.Media<'files', true>;
+    any_other_details: Schema.Attribute.Text;
+    area_of_specification: Schema.Attribute.Enumeration<
+      [
+        'Health',
+        'Financial Services',
+        'IT',
+        'Consumer Products and Services',
+        'Logistics and Transportation',
+        'Business Products and Services',
+        'Construction and Real Estate',
+        'Trading',
+        'Manufacturing',
+        'Advertising and Marketing',
+        'Agriculture',
+      ]
+    >;
+    consultation_fee: Schema.Attribute.Decimal;
+    continent: Schema.Attribute.Enumeration<
+      [
+        'Africa',
+        'Antarctica',
+        'Asia',
+        'Europe',
+        'North America',
+        'South America',
+        'Oceania',
+      ]
+    > &
+      Schema.Attribute.Required;
+    country: Schema.Attribute.Enumeration<
+      [
+        'Afghanistan',
+        'Albania',
+        'Algeria',
+        'Andorra',
+        'Angola',
+        'Antigua and Barbuda',
+        'Argentina',
+        'Armenia',
+        'Australia',
+        'Austria',
+        'Azerbaijan',
+        'Bahamas',
+        'Bahrain',
+        'Bangladesh',
+        'Barbados',
+        'Belarus',
+        'Belgium',
+        'Belize',
+        'Benin',
+        'Bhutan',
+        'Bolivia',
+        'Bosnia and Herzegovina',
+        'Botswana',
+        'Brazil',
+        'Brunei',
+        'Bulgaria',
+        'Burkina Faso',
+        'Burundi',
+        'Cabo Verde',
+        'Cambodia',
+        'Cameroon',
+        'Canada',
+        'Central African Republic',
+        'Chad',
+        'Chile',
+        'China',
+        'Colombia',
+        'Comoros',
+        'Congo',
+        'Costa Rica',
+        'Croatia',
+        'Cuba',
+        'Cyprus',
+        'Czech Republic',
+        'Democratic Republic of the Congo',
+        'Denmark',
+        'Djibouti',
+        'Dominica',
+        'Dominican Republic',
+        'Ecuador',
+        'Egypt',
+        'El Salvador',
+        'Equatorial Guinea',
+        'Eritrea',
+        'Estonia',
+        'Eswatini',
+        'Ethiopia',
+        'Fiji',
+        'Finland',
+        'France',
+        'Gabon',
+        'Gambia',
+        'Georgia',
+        'Germany',
+        'Ghana',
+        'Greece',
+        'Grenada',
+        'Guatemala',
+        'Guinea',
+        'Guinea-Bissau',
+        'Guyana',
+        'Haiti',
+        'Holy See',
+        'Honduras',
+        'Hungary',
+        'Iceland',
+        'India',
+        'Indonesia',
+        'Iran',
+        'Iraq',
+        'Ireland',
+        'Israel',
+        'Italy',
+        'Jamaica',
+        'Japan',
+        'Jordan',
+        'Kazakhstan',
+        'Kenya',
+        'Kiribati',
+        'Kuwait',
+        'Kyrgyzstan',
+        'Laos',
+        'Latvia',
+        'Lebanon',
+        'Lesotho',
+        'Liberia',
+        'Libya',
+        'Liechtenstein',
+        'Lithuania',
+        'Luxembourg',
+        'Madagascar',
+        'Malawi',
+        'Malaysia',
+        'Maldives',
+        'Mali',
+        'Malta',
+        'Marshall Islands',
+        'Mauritania',
+        'Mauritius',
+        'Mexico',
+        'Micronesia',
+        'Moldova',
+        'Monaco',
+        'Mongolia',
+        'Montenegro',
+        'Morocco',
+        'Mozambique',
+        'Myanmar',
+        'Namibia',
+        'Nauru',
+        'Nepal',
+        'Netherlands',
+        'New Zealand',
+        'Nicaragua',
+        'Niger',
+        'Nigeria',
+        'North Korea',
+        'North Macedonia',
+        'Norway',
+        'Oman',
+        'Pakistan',
+        'Palau',
+        'Palestine',
+        'Panama',
+        'Papua New Guinea',
+        'Paraguay',
+        'Peru',
+        'Philippines',
+        'Poland',
+        'Portugal',
+        'Qatar',
+        'Romania',
+        'Russia',
+        'Rwanda',
+        'Saint Kitts and Nevis',
+        'Saint Lucia',
+        'Saint Vincent and the Grenadines',
+        'Samoa',
+        'San Marino',
+        'Sao Tome and Principe',
+        'Saudi Arabia',
+        'Senegal',
+        'Serbia',
+        'Seychelles',
+        'Sierra Leone',
+        'Singapore',
+        'Slovakia',
+        'Slovenia',
+        'Solomon Islands',
+        'Somalia',
+        'South Africa',
+        'South Korea',
+        'South Sudan',
+        'Spain',
+        'Sri Lanka',
+        'Sudan',
+        'Suriname',
+        'Sweden',
+        'Switzerland',
+        'Syria',
+        'Tajikistan',
+        'Tanzania',
+        'Thailand',
+        'Timor-Leste',
+        'Togo',
+        'Tonga',
+        'Trinidad and Tobago',
+        'Tunisia',
+        'Turkey',
+        'Turkmenistan',
+        'Tuvalu',
+        'Uganda',
+        'Ukraine',
+        'United Arab Emirates',
+        'United Kingdom',
+        'United States',
+        'Uruguay',
+        'Uzbekistan',
+        'Vanuatu',
+        'Venezuela',
+        'Vietnam',
+        'Yemen',
+        'Zambia',
+        'Zimbabwe',
+      ]
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    cv_biography: Schema.Attribute.Media<'images' | 'files', true>;
+    date_of_birth: Schema.Attribute.Date;
+    eligibility_criteria: Schema.Attribute.Text;
+    email: Schema.Attribute.Email &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    existing_partners: Schema.Attribute.String;
+    field_of_expertise: Schema.Attribute.Enumeration<
+      ['Economics', 'Politics', 'Law']
+    >;
+    foundation_year: Schema.Attribute.Integer;
+    investment_policies: Schema.Attribute.Text;
+    investment_policies_file: Schema.Attribute.Media<'files', true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::user-profile.user-profile'
+    > &
+      Schema.Attribute.Private;
+    location_of_branches: Schema.Attribute.String;
+    location_of_headquarters: Schema.Attribute.String;
+    membership_duration: Schema.Attribute.Enumeration<
+      ['One Year', 'Two Years', 'Three Years']
+    >;
+    name_of_the_company: Schema.Attribute.String;
+    name_of_the_person: Schema.Attribute.String & Schema.Attribute.Required;
+    owner: Schema.Attribute.Relation<
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    requirements_for_partnership: Schema.Attribute.Text;
+    short_description: Schema.Attribute.Text;
+    specialisation_on_selected_field: Schema.Attribute.String;
+    telephone_mobile: Schema.Attribute.String;
+    type_of_investor: Schema.Attribute.Enumeration<
+      [
+        'Private Equity Firms',
+        'Venture Capital Firms',
+        'Private Investors',
+        'Angel Investors',
+        'Business Lenders',
+      ]
+    >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    work_experience_description: Schema.Attribute.Text;
+    years_of_experience: Schema.Attribute.Integer;
   };
 }
 
@@ -2166,12 +1435,10 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::call-room.call-room': ApiCallRoomCallRoom;
-      'api::company.company': ApiCompanyCompany;
       'api::conversation.conversation': ApiConversationConversation;
-      'api::expert.expert': ApiExpertExpert;
-      'api::investor.investor': ApiInvestorInvestor;
       'api::message.message': ApiMessageMessage;
       'api::subscription-plan.subscription-plan': ApiSubscriptionPlanSubscriptionPlan;
+      'api::user-profile.user-profile': ApiUserProfileUserProfile;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

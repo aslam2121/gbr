@@ -1,0 +1,32 @@
+company form registration fields
+
+
+1. Select Continent - checkbox option for desktop & drop down for mobile view
+
+2. Name Of the Company- text
+
+3. Name of the Person - text
+
+4. foundation year - number 
+
+5. country - drop down to select country
+
+6. location of headquarters - text
+
+7. location of branch/branches - text
+
+8. areas of specifications - dropdown with these options - a)Health (b)Financial Services (c)IT (d)Consumer Products and Services (e)Logistics and Transportation (f) Business Products and Services (g)Construction and Real Estate (h) Trading (i)Manufacturing (j) Advertising and Manufacturing (k) Agriculture 
+
+9. annual revenue data or turn over data - media upload
+
+10. requirements for partnership - description box
+
+10. existing partners, if any - text
+
+11. personal/business email - email field
+
+12. telephone/mobile - number
+
+13. short description about the company - description box
+
+14. membership duration - tick box in desktop and dropdown in mobile with these options (a) 1 Year (b) 2 years (c) 3 Years

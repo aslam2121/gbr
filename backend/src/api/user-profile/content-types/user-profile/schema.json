@@ -1,21 +1,16 @@
 {
   "kind": "collectionType",
-  "collectionName": "experts",
+  "collectionName": "user_profiles",
   "info": {
-    "singularName": "expert",
-    "pluralName": "experts",
-    "displayName": "Expert",
-    "description": "Expert profile linked to a user"
+    "singularName": "user-profile",
+    "pluralName": "user-profiles",
+    "displayName": "User Profile"
   },
   "options": {
     "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
-    "specialty": {
-      "type": "string",
-      "maxLength": 255
-    },
     "continent": {
       "type": "enumeration",
       "required": true,
@@ -25,26 +20,48 @@
         "Asia",
         "Europe",
         "North America",
-        "Oceania",
-        "South America"
+        "South America",
+        "Oceania"
       ]
     },
-    "slug": {
-      "type": "uid"
+    "name_of_the_person": {
+      "type": "string",
+      "required": true
     },
-    "date_of_birth": {
-      "type": "date"
+    "email": {
+      "type": "email",
+      "required": true,
+      "unique": true
+    },
+    "telephone_mobile": {
+      "type": "string"
+    },
+    "short_description": {
+      "type": "text"
+    },
+    "membership_duration": {
+      "type": "enumeration",
+      "enum": [
+        "One Year",
+        "Two Years",
+        "Three Years"
+      ]
+    },
+    "name_of_the_company": {
+      "type": "string"
+    },
+    "foundation_year": {
+      "type": "integer"
     },
     "country": {
       "type": "enumeration",
-      "required": true,
       "enum": [
         "Afghanistan",
         "Albania",
         "Algeria",
         "Andorra",
         "Angola",
-        "Antigua & Deps",
+        "Antigua and Barbuda",
         "Argentina",
         "Armenia",
         "Australia",
@@ -60,41 +77,41 @@
         "Benin",
         "Bhutan",
         "Bolivia",
-        "Bosnia Herzegovina",
+        "Bosnia and Herzegovina",
         "Botswana",
         "Brazil",
         "Brunei",
         "Bulgaria",
-        "Burkina",
+        "Burkina Faso",
         "Burundi",
+        "Cabo Verde",
         "Cambodia",
         "Cameroon",
         "Canada",
-        "Cape Verde",
-        "Central African Rep",
+        "Central African Republic",
         "Chad",
         "Chile",
         "China",
         "Colombia",
         "Comoros",
         "Congo",
-        "Congo {Democratic Rep}",
         "Costa Rica",
         "Croatia",
         "Cuba",
         "Cyprus",
         "Czech Republic",
+        "Democratic Republic of the Congo",
         "Denmark",
         "Djibouti",
         "Dominica",
         "Dominican Republic",
-        "East Timor",
         "Ecuador",
         "Egypt",
         "El Salvador",
         "Equatorial Guinea",
         "Eritrea",
         "Estonia",
+        "Eswatini",
         "Ethiopia",
         "Fiji",
         "Finland",
@@ -111,6 +128,7 @@
         "Guinea-Bissau",
         "Guyana",
         "Haiti",
+        "Holy See",
         "Honduras",
         "Hungary",
         "Iceland",
@@ -118,19 +136,15 @@
         "Indonesia",
         "Iran",
         "Iraq",
-        "Ireland {Republic}",
+        "Ireland",
         "Israel",
         "Italy",
-        "Ivory Coast",
         "Jamaica",
         "Japan",
         "Jordan",
         "Kazakhstan",
         "Kenya",
         "Kiribati",
-        "Korea North",
-        "Korea South",
-        "Kosovo",
         "Kuwait",
         "Kyrgyzstan",
         "Laos",
@@ -142,7 +156,6 @@
         "Liechtenstein",
         "Lithuania",
         "Luxembourg",
-        "Macedonia",
         "Madagascar",
         "Malawi",
         "Malaysia",
@@ -160,7 +173,7 @@
         "Montenegro",
         "Morocco",
         "Mozambique",
-        "Myanmar, {Burma}",
+        "Myanmar",
         "Namibia",
         "Nauru",
         "Nepal",
@@ -169,10 +182,13 @@
         "Nicaragua",
         "Niger",
         "Nigeria",
+        "North Korea",
+        "North Macedonia",
         "Norway",
         "Oman",
         "Pakistan",
         "Palau",
+        "Palestine",
         "Panama",
         "Papua New Guinea",
         "Paraguay",
@@ -182,14 +198,14 @@
         "Portugal",
         "Qatar",
         "Romania",
-        "Russian Federation",
+        "Russia",
         "Rwanda",
-        "St Kitts & Nevis",
-        "St Lucia",
-        "Saint Vincent & the Grenadines",
+        "Saint Kitts and Nevis",
+        "Saint Lucia",
+        "Saint Vincent and the Grenadines",
         "Samoa",
         "San Marino",
-        "Sao Tome & Principe",
+        "Sao Tome and Principe",
         "Saudi Arabia",
         "Senegal",
         "Serbia",
@@ -201,22 +217,22 @@
         "Solomon Islands",
         "Somalia",
         "South Africa",
+        "South Korea",
         "South Sudan",
         "Spain",
         "Sri Lanka",
         "Sudan",
         "Suriname",
-        "Swaziland",
         "Sweden",
         "Switzerland",
         "Syria",
-        "Taiwan",
         "Tajikistan",
         "Tanzania",
         "Thailand",
+        "Timor-Leste",
         "Togo",
         "Tonga",
-        "Trinidad & Tobago",
+        "Trinidad and Tobago",
         "Tunisia",
         "Turkey",
         "Turkmenistan",
@@ -229,13 +245,73 @@
         "Uruguay",
         "Uzbekistan",
         "Vanuatu",
-        "Vatican City",
         "Venezuela",
         "Vietnam",
         "Yemen",
         "Zambia",
         "Zimbabwe"
       ]
+    },
+    "location_of_headquarters": {
+      "type": "string"
+    },
+    "location_of_branches": {
+      "type": "string"
+    },
+    "area_of_specification": {
+      "type": "enumeration",
+      "enum": [
+        "Health",
+        "Financial Services",
+        "IT",
+        "Consumer Products and Services",
+        "Logistics and Transportation",
+        "Business Products and Services",
+        "Construction and Real Estate",
+        "Trading",
+        "Manufacturing",
+        "Advertising and Marketing",
+        "Agriculture"
+      ]
+    },
+    "annual_revenue_data": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "files"
+      ]
+    },
+    "requirements_for_partnership": {
+      "type": "text"
+    },
+    "existing_partners": {
+      "type": "string"
+    },
+    "type_of_investor": {
+      "type": "enumeration",
+      "enum": [
+        "Private Equity Firms",
+        "Venture Capital Firms",
+        "Private Investors",
+        "Angel Investors",
+        "Business Lenders"
+      ]
+    },
+    "investment_policies": {
+      "type": "text"
+    },
+    "investment_policies_file": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "files"
+      ]
+    },
+    "eligibility_criteria": {
+      "type": "text"
+    },
+    "date_of_birth": {
+      "type": "date"
     },
     "field_of_expertise": {
       "type": "enumeration",
@@ -251,7 +327,7 @@
     "years_of_experience": {
       "type": "integer"
     },
-    "short_description": {
+    "work_experience_description": {
       "type": "text"
     },
     "cv_biography": {
@@ -265,27 +341,13 @@
     "consultation_fee": {
       "type": "decimal"
     },
-    "telephone_mobile": {
-      "type": "biginteger"
-    },
-    "email": {
-      "type": "email",
-      "required": true
-    },
     "any_other_details": {
       "type": "text"
     },
-    "membership_duration": {
-      "type": "enumeration",
-      "enum": [
-        "year 1",
-        "years 2",
-        "years 3"
-      ]
-    },
-    "name_of_the_person": {
-      "type": "string",
-      "required": true
+    "owner": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
     }
   }
 }

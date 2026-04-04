@@ -1,0 +1,28 @@
+Expert form registration fields
+
+
+1. Select Continent - checkbox option for desktop & drop down for mobile view
+
+2. Name of the Person - text
+
+3. Date of Birth - date selection 
+
+4. Field of Expertise - checkbox (a) Economics (b) Politics (c) Law drop down for mobile view
+
+5. Specialisation on selected field - text
+
+6. years of experience - number
+
+7. Brief Description about work Experience - description box 
+
+8. CV/Biography - media upload
+
+9. Consultation Fee/Hour - for entering dollars in floating number with dollar sign
+
+10. personal/business email - email field
+
+11. telephone/mobile - number
+
+12. Any other details (if any) - description box
+
+13. membership duration - tick box in desktop and dropdown in mobile with these options (a) 1 Year (b) 2 Years (c) 3 Years

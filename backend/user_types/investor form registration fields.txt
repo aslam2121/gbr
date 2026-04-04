@@ -1,0 +1,30 @@
+investor form registration fields
+
+
+1. Select Continent - checkbox option for desktop & drop down for mobile view
+
+2. Name Of the Company- text
+
+3. Name of the Person - text
+
+4. foundation year - number 
+
+5. country - drop down to select country
+
+6. location of headquarters - text
+
+7. location of branch/branches - text
+
+8. Type of Investor - dropdown with these options - a)Private Equity Firms (b)Venture Capital Firms (c)Private Investors (d)Angel Investors (e)Business Lenders 
+
+9. Investment Policies (if any) - description box with media upload
+
+10. Eligibility Criteria - description box
+
+11. personal/business email - email field
+
+12. telephone/mobile - number
+
+13. short description about the company - description box
+
+14. membership duration - tick box in desktop and dropdown in mobile with these options (a) 1 Year (b) 2 Years (c) 3 Years

@@ -22,6 +22,7 @@ module.exports = (plugin) => {
   const originalRegister = plugin.controllers.auth.register;
 
   plugin.controllers.auth.register = async (ctx) => {
+    const originalBody = { ...ctx.request.body };
     const body = ctx.request.body;
     const { user_type, display_name } = body;
 
@@ -118,6 +119,32 @@ module.exports = (plugin) => {
     };
 
     const user = await getService('user').add(newUser);
+
+    // Create the unified user-profile linked to this user
+    const profileFields = _.pick(originalBody, [
+      // Common fields
+      'continent', 'name_of_the_person', 'email', 'telephone_mobile',
+      'short_description', 'membership_duration',
+      // Company + Investor shared
+      'name_of_the_company', 'foundation_year', 'country',
+      'location_of_headquarters', 'location_of_branches',
+      // Company only
+      'area_of_specification', 'requirements_for_partnership', 'existing_partners',
+      // Investor only
+      'type_of_investor', 'investment_policies', 'eligibility_criteria',
+      // Expert only
+      'date_of_birth', 'field_of_expertise', 'specialisation_on_selected_field',
+      'years_of_experience', 'work_experience_description', 'consultation_fee',
+      'any_other_details',
+    ]);
+
+    await strapi.documents('api::user-profile.user-profile').create({
+      data: {
+        ...profileFields,
+        owner: user.id,
+      },
+    });
+
     const sanitizedUser = await sanitizeUser(user, ctx);
 
     if (settings.email_confirmation) {
