@@ -9,7 +9,7 @@
 
 ## Auth
 - Strapi Users & Permissions + NextAuth.js
-- Three user types: Company, Investor, Expert (separate registration flows)
+- Three user types: Company, Investor, Expert
 - Protected routes check auth in layout, redirect to `/login`
 
 ## Architecture
@@ -17,54 +17,31 @@
 - All Strapi calls go through `lib/strapi.ts`
 - Business logic never in page files — pages only import from `/modules/` and call `/lib/`
 
-## User Types Refactoring (2026-04-04) — PENDING APPROVAL
+## User Types Refactoring (2026-04-04) — IMPLEMENTED
 
-### Decision: Replace 3 separate collection types with 1 "user-profile" collection type
-- Currently: company, investor, expert are 3 separate Strapi collection types + 3 separate registration forms
-- Proposed: Single `user-profile` collection type with common fields + type-prefixed specific fields
-- The `user_type` enum on User model stays as-is (company/investor/expert)
-- Dynamic registration form replaces 3 separate forms — shows/hides fields based on selected type
+### Decision: Single `user-profile` collection type replaces 3 separate types
+- `user_type` enum on User model stays as-is (company/investor/expert)
+- Dynamic registration form shows/hides fields based on selected type
+- One API query for any profile, one component to render/filter
 
-### Why:
-- ~60% of fields are shared across types (continent, person name, email, phone, description, membership)
-- Company and Investor share even more (~80% overlap)
-- Reduces 43 affected files significantly
-- Enables a single dynamic registration form
-- Simpler API queries and type definitions
+### Custom registration endpoint
+- `/api/custom-auth/register` — custom API (not Strapi's built-in auth/local/register)
+- **Why:** Strapi v5's built-in register route has middleware-level validation that rejects unknown fields. We cannot pass profile fields through it.
+- Backend picks profile fields from request body via whitelist (`PROFILE_FIELDS`), creates user and profile in one transaction
+- Frontend sends single request via `strapiRegister()` in `lib/strapi.ts`
 
-### New Field Structure (from user's txt files):
+### Desktop/Mobile dual inputs (continent, expertise, membership)
+- Hidden input holds the react-hook-form registered value
+- Desktop radio buttons and mobile dropdowns both call `setValue()` to update hidden input
+- **Why:** React-hook-form conflicts when two visible inputs register the same field name
 
-**Common fields (all types):**
-- continent (enum/checkbox)
-- person_name (text)
-- email (email)
-- telephone (text)
-- description (richtext)
-- membership_duration (enum: 1yr/2yr/3yr)
+### Input sanitization
+- All string fields stripped of `<>` characters on backend before DB write
+- Email lowercased and trimmed
 
-**Company + Investor shared:**
-- company_name (text)
-- foundation_year (number)
-- country (enum/dropdown)
-- hq_location (text)
-- branch_locations (text)
+### Membership duration values
+- Strapi enum doesn't allow values starting with numbers
+- Values: `One Year`, `Two Years`, `Three Years` (not `1 Year`, `2 Years`, `3 Years`)
 
-**Company only:**
-- company_industry (enum: Health, Financial Services, IT, Consumer Products, Logistics, Business Products, Construction, Trading, Manufacturing, Advertising, Agriculture)
-- company_revenue_data (media)
-- company_partnership_requirements (richtext)
-- company_existing_partners (text)
-
-**Investor only:**
-- investor_type (enum: Private Equity, Venture Capital, Private Investors, Angel Investors, Business Lenders)
-- investor_policies (richtext + media)
-- investor_eligibility_criteria (richtext)
-
-**Expert only:**
-- expert_dob (date)
-- expert_field (enum: Economics, Politics, Law)
-- expert_specialisation (text)
-- expert_years_experience (number)
-- expert_work_experience (richtext)
-- expert_cv (media)
-- expert_fee (decimal)
+### Relation field naming
+- `owner` (not `users_permissions_user`) — matches old schema convention, clearer intent

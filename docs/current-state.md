@@ -10,18 +10,41 @@
 - Messaging: Contacts list + chat window with real conversations, unread counts
 - Backend: Strapi v5 with PostgreSQL
 
+## User Types Refactoring — Phases 1-5 DONE
+
+### What changed:
+- **Old:** 3 separate Strapi collection types (company, investor, expert) + 3 registration forms + 3 route pages
+- **New:** 1 unified `user-profile` collection type + 1 dynamic registration form at `/register`
+
+### Backend:
+- Old collection types deleted (company, investor, expert) — schemas, controllers, routes, services, DB tables all gone
+- New `user-profile` collection type with 28 fields (common + type-specific) + `owner` relation to User
+- Custom API endpoint: `/api/custom-auth/register` — handles user creation + profile creation in one request
+- XSS sanitization on all string inputs
+- `strapi-server.js` simplified — redirects typed registrations to custom endpoint
+- Relation field renamed from `users_permissions_user` to `owner`
+- Permissions: Authenticated (all), Public (find, findOne, register)
+
+### Frontend:
+- `DynamicRegisterForm.tsx` — single form with user_type dropdown, shows/hides type-specific sections
+- Desktop: radio buttons for continent, expertise, membership | Mobile: dropdowns
+- Registration calls `strapiRegister()` from `lib/strapi.ts` (not raw axios)
+- `UserType` exported from `types/next-auth.d.ts` and used across codebase
+- Old forms deleted: CompanyRegisterForm, InvestorRegisterForm, ExpertRegisterForm
+- Old routes deleted: /register/company, /register/investor, /register/expert
+
+### DB cleanup done:
+- Truncated 9801 companies, 1 investor, 1 expert
+- Deleted 4 test user accounts
+- Removed 9 duplicate subscription plans (kept original 9)
+- All old tables dropped
+
 ## In Progress
-- **User Types Refactoring** — Phase 1 complete. Old types deleted. Next: create unified `user-profile` collection type in Strapi admin.
+- **Phase 6:** Rewiring dependent features (dashboard, messaging, directory, hooks, types) to work with unified user-profile
 
-## Old User Types — DELETED (2026-04-04)
-- 3 Strapi collection types deleted (company, investor, expert)
-- 3 API folders auto-removed by Strapi
-- 4 DB tables dropped
-- Frontend still has old registration forms and type references (to be rewired in later phases)
-- User model `user_type` enum field ["company", "investor", "expert"] stays
-
-## Files Affected by User Type Refactoring
-See docs/todo.md for the complete file list organized by phase.
+## Known Incomplete
+- File upload fields (revenue data, CV, investment policies) are visible in form but don't upload yet
+- Frontend type definitions still have old Company interface in `types/company.ts`
 
 ## Recent Changes
 - Fixed unread count by querying per-conversation instead of deep $or filter

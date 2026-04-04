@@ -88,9 +88,10 @@ export default {
     // Create user-profile with sanitized profile fields
     const profileFields = sanitizeObject(_.pick(body, PROFILE_FIELDS));
     try {
-      await strapi.documents('api::user-profile.user-profile').create({
+      await strapi.db.query('api::user-profile.user-profile').create({
         data: {
           ...profileFields,
+          email: email.toLowerCase().trim(),
           owner: user.id,
         },
       });
