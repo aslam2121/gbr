@@ -4,10 +4,10 @@ import { useEffect, useState, useMemo } from "react";
 import { MapContainer, TileLayer, ZoomControl, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { strapiGet } from "@/lib/strapi";
-import { type Company, CONTINENT_LABELS } from "@/types/company";
+import { type Company, CONTINENT_LABELS, COUNTRY_COORDS } from "@/types/company";
 import { MapMarker } from "./MapMarker";
 
-/** Group companies by country and compute average lat/lng per group */
+/** Group companies by country and use lookup coords */
 interface CountryGroup {
   country: string;
   companies: Company[];
@@ -22,13 +22,13 @@ function groupByCountry(companies: Company[]): CountryGroup[] {
     map.set(c.country, list);
   }
 
-  return Array.from(map.entries()).map(([country, list]) => {
-    const lats = list.filter((c) => c.latitude != null).map((c) => c.latitude!);
-    const lngs = list.filter((c) => c.longitude != null).map((c) => c.longitude!);
-    const avgLat = lats.length ? lats.reduce((a, b) => a + b, 0) / lats.length : 0;
-    const avgLng = lngs.length ? lngs.reduce((a, b) => a + b, 0) / lngs.length : 0;
-    return { country, companies: list, position: [avgLat, avgLng] as [number, number] };
-  });
+  return Array.from(map.entries())
+    .filter(([country]) => COUNTRY_COORDS[country])
+    .map(([country, list]) => ({
+      country,
+      companies: list,
+      position: COUNTRY_COORDS[country],
+    }));
 }
 
 /** Search bar overlay */
@@ -118,7 +118,8 @@ export function WorldMap() {
   useEffect(() => {
     async function fetch() {
       try {
-        const res = await strapiGet<Company[]>("/companies", {
+        const res = await strapiGet<Company[]>("/user-profiles", {
+          "filters[user_type][$eq]": "company",
           "pagination[pageSize]": 100,
           sort: "name_of_the_company:asc",
         });
@@ -137,7 +138,7 @@ export function WorldMap() {
     const q = search.toLowerCase();
     return companies.filter(
       (c) =>
-        c.name_of_the_company.toLowerCase().includes(q) ||
+        (c.name_of_the_company ?? "").toLowerCase().includes(q) ||
         c.country.toLowerCase().includes(q)
     );
   }, [companies, search]);

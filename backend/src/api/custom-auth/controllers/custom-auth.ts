@@ -21,7 +21,7 @@ function sanitizeObject(obj: Record<string, unknown>): Record<string, unknown> {
 }
 
 const PROFILE_FIELDS = [
-  'continent', 'name_of_the_person', 'email', 'telephone_mobile',
+  'user_type', 'continent', 'name_of_the_person', 'email', 'telephone_mobile',
   'short_description', 'membership_duration',
   'name_of_the_company', 'foundation_year', 'country',
   'location_of_headquarters', 'location_of_branches',

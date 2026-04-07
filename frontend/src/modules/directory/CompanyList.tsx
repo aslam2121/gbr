@@ -22,9 +22,8 @@ export function CompanyList({ initialData }: CompanyListProps) {
 
   const page = Number(searchParams.get("page") ?? "1");
   const search = searchParams.get("search") ?? "";
-  const industry = searchParams.get("industry") ?? "";
+  const area = searchParams.get("area") ?? "";
   const continent = searchParams.get("continent") ?? "";
-  const size = searchParams.get("size") ?? "";
 
   const fetchCompanies = useCallback(async () => {
     setLoading(true);
@@ -32,32 +31,31 @@ export function CompanyList({ initialData }: CompanyListProps) {
       const params: Record<string, unknown> = {
         "pagination[page]": page,
         "pagination[pageSize]": PAGE_SIZE,
+        "filters[user_type][$eq]": "company",
+        "populate[logo]": "*",
         sort: "name_of_the_company:asc",
       };
 
       if (search) {
         params["filters[name_of_the_company][$containsi]"] = search;
       }
-      if (industry) {
-        params["filters[industry][$eq]"] = industry;
+      if (area) {
+        params["filters[area_of_specification][$eq]"] = area;
       }
       if (continent) {
         params["filters[continent][$eq]"] = continent;
       }
-      if (size) {
-        params["filters[employee_count][$eq]"] = size;
-      }
 
-      const result = await strapiGet<Company[]>("/companies", params);
+      const result = await strapiGet<Company[]>("/user-profiles", params);
       setData(result);
     } catch (err) {
       console.error("Failed to fetch companies:", err);
     } finally {
       setLoading(false);
     }
-  }, [page, search, industry, continent, size]);
+  }, [page, search, area, continent]);
 
-  // Re-fetch when filters/page change (skip on initial render if params match)
+  // Re-fetch when filters/page change
   useEffect(() => {
     fetchCompanies();
   }, [fetchCompanies]);
@@ -125,7 +123,6 @@ export function CompanyList({ initialData }: CompanyListProps) {
 
           {Array.from({ length: totalPages }).map((_, i) => {
             const p = i + 1;
-            // Show first, last, and pages around current
             if (p === 1 || p === totalPages || (p >= page - 1 && p <= page + 1)) {
               return (
                 <button
@@ -141,7 +138,6 @@ export function CompanyList({ initialData }: CompanyListProps) {
                 </button>
               );
             }
-            // Show ellipsis
             if (p === page - 2 || p === page + 2) {
               return (
                 <span key={p} className="px-2 text-gray-400">

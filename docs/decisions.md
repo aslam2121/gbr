@@ -45,3 +45,19 @@
 
 ### Relation field naming
 - `owner` (not `users_permissions_user`) — matches old schema convention, clearer intent
+
+### user_type location (2026-04-07)
+- `user_type` stays on User model only — NOT duplicated on user-profile
+- Directory queries filter via relation: `filters[owner][user_type][$eq]=company`
+- **Why:** Avoids duplication, practical for subscription-based access control
+
+### Location approach (2026-04-07)
+- Country-level positioning via `COUNTRY_COORDS` lookup table (197 countries)
+- No latitude/longitude fields on user-profile
+- **Why:** Users can't easily provide lat/lng. Country-level sufficient since HomeMap groups by country. Can upgrade to city-level geocoding later.
+
+### Removed fields (2026-04-07)
+- `employee_count`, `website`, `industry` — no longer on user-profile
+- `area_of_specification` replaces `industry` with different enum values
+- `logo` added as media field via Strapi admin
+- **Why:** Simplifies schema. area_of_specification better matches the B2B business categories.

@@ -4,9 +4,8 @@ import type { Metadata } from "next";
 import { strapiGet } from "@/lib/strapi";
 import {
   type Company,
-  INDUSTRY_LABELS,
+  AREA_LABELS,
   CONTINENT_LABELS,
-  EMPLOYEE_COUNT_LABELS,
   countryFlag,
 } from "@/types/company";
 import { CompanyMap } from "@/modules/directory/CompanyMap";
@@ -19,7 +18,7 @@ interface PageProps {
 
 async function getCompany(documentId: string): Promise<Company | null> {
   try {
-    const res = await strapiGet<Company>(`/companies/${documentId}`, {
+    const res = await strapiGet<Company>(`/user-profiles/${documentId}`, {
       "populate": "*",
     });
     return res.data ?? null;
@@ -36,7 +35,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: `${company.name_of_the_company} | B2B Platform`,
     description: company.short_description
       ? String(company.short_description).slice(0, 160)
-      : `${company.name_of_the_company} — ${company.industry ?? ""} company based in ${company.country}`,
+      : `${company.name_of_the_company} — ${company.area_of_specification ?? ""} company based in ${company.country}`,
   };
 }
 
@@ -48,7 +47,8 @@ export default async function CompanyDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  const logoUrl = company.logo?.formats?.small?.url ?? company.logo?.url;
+  const firstLogo = company.company_logo?.[0];
+  const logoUrl = firstLogo?.formats?.small?.url ?? firstLogo?.url;
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -88,9 +88,9 @@ export default async function CompanyDetailPage({ params }: PageProps) {
                 <div>
                   <h1 className="text-2xl font-bold text-gray-900">{company.name_of_the_company}</h1>
                   <div className="mt-2 flex flex-wrap items-center gap-2">
-                    {company.industry && (
+                    {company.area_of_specification && (
                       <span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700">
-                        {INDUSTRY_LABELS[company.industry] ?? company.industry}
+                        {AREA_LABELS[company.area_of_specification] ?? company.area_of_specification}
                       </span>
                     )}
                     {company.continent && (
@@ -113,17 +113,25 @@ export default async function CompanyDetailPage({ params }: PageProps) {
               </div>
             )}
 
-            {/* Map */}
-            {company.latitude && company.longitude && (
-              <div className="rounded-xl bg-white shadow-sm ring-1 ring-gray-200 overflow-hidden">
-                <div className="px-6 pt-6 pb-3">
-                  <h2 className="text-lg font-semibold text-gray-900">Location</h2>
-                </div>
-                <div className="h-64">
-                  <CompanyMap company={company} />
+            {/* Partnership Requirements */}
+            {company.requirements_for_partnership && (
+              <div className="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
+                <h2 className="text-lg font-semibold text-gray-900">Partnership Requirements</h2>
+                <div className="mt-3 text-gray-600 leading-relaxed whitespace-pre-wrap">
+                  {company.requirements_for_partnership}
                 </div>
               </div>
             )}
+
+            {/* Map */}
+            <div className="rounded-xl bg-white shadow-sm ring-1 ring-gray-200 overflow-hidden">
+              <div className="px-6 pt-6 pb-3">
+                <h2 className="text-lg font-semibold text-gray-900">Location</h2>
+              </div>
+              <div className="h-64">
+                <CompanyMap company={company} />
+              </div>
+            </div>
           </div>
 
           {/* Sidebar */}
@@ -139,27 +147,47 @@ export default async function CompanyDetailPage({ params }: PageProps) {
                   </dd>
                 </div>
 
-                {company.employee_count && (
+                {company.location_of_headquarters && (
                   <div>
-                    <dt className="text-sm font-medium text-gray-500">Employees</dt>
+                    <dt className="text-sm font-medium text-gray-500">Headquarters</dt>
                     <dd className="mt-1 text-sm text-gray-900">
-                      {EMPLOYEE_COUNT_LABELS[company.employee_count] ?? company.employee_count}
+                      {company.location_of_headquarters}
                     </dd>
                   </div>
                 )}
 
-                {company.website && (
+                {company.location_of_branches && (
                   <div>
-                    <dt className="text-sm font-medium text-gray-500">Website</dt>
-                    <dd className="mt-1">
-                      <a
-                        href={company.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm text-blue-600 hover:text-blue-700 break-all"
-                      >
-                        {company.website.replace(/^https?:\/\//, "")}
-                      </a>
+                    <dt className="text-sm font-medium text-gray-500">Branches</dt>
+                    <dd className="mt-1 text-sm text-gray-900">
+                      {company.location_of_branches}
+                    </dd>
+                  </div>
+                )}
+
+                {company.foundation_year && (
+                  <div>
+                    <dt className="text-sm font-medium text-gray-500">Founded</dt>
+                    <dd className="mt-1 text-sm text-gray-900">
+                      {company.foundation_year}
+                    </dd>
+                  </div>
+                )}
+
+                {company.existing_partners && (
+                  <div>
+                    <dt className="text-sm font-medium text-gray-500">Existing Partners</dt>
+                    <dd className="mt-1 text-sm text-gray-900">
+                      {company.existing_partners}
+                    </dd>
+                  </div>
+                )}
+
+                {company.name_of_the_person && (
+                  <div>
+                    <dt className="text-sm font-medium text-gray-500">Contact Person</dt>
+                    <dd className="mt-1 text-sm text-gray-900">
+                      {company.name_of_the_person}
                     </dd>
                   </div>
                 )}

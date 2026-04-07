@@ -644,6 +644,7 @@ export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
         'Agriculture',
       ]
     >;
+    company_logo: Schema.Attribute.Media<'images', true>;
     consultation_fee: Schema.Attribute.Decimal;
     continent: Schema.Attribute.Enumeration<
       [
@@ -905,6 +906,8 @@ export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    user_type: Schema.Attribute.Enumeration<['company', 'investor', 'expert']> &
+      Schema.Attribute.Required;
     work_experience_description: Schema.Attribute.Text;
     years_of_experience: Schema.Attribute.Integer;
   };

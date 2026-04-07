@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { Company } from "@/types/company";
+import { COUNTRY_COORDS } from "@/types/company";
 
 interface CompanyMapProps {
   company: Company;
@@ -10,7 +11,11 @@ interface CompanyMapProps {
 export function CompanyMap({ company }: CompanyMapProps) {
   const [MapComponent, setMapComponent] = useState<React.ReactNode>(null);
 
+  const coords = COUNTRY_COORDS[company.country];
+
   useEffect(() => {
+    if (!coords) return;
+
     // Dynamically import leaflet to avoid SSR issues
     Promise.all([
       import("leaflet"),
@@ -26,13 +31,11 @@ export function CompanyMap({ company }: CompanyMapProps) {
       });
 
       const { MapContainer, TileLayer, Marker, Popup } = RL;
-      const lat = company.latitude!;
-      const lng = company.longitude!;
 
       setMapComponent(
         <MapContainer
-          center={[lat, lng]}
-          zoom={10}
+          center={coords}
+          zoom={5}
           scrollWheelZoom={false}
           style={{ height: "100%", width: "100%" }}
         >
@@ -40,15 +43,15 @@ export function CompanyMap({ company }: CompanyMapProps) {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <Marker position={[lat, lng]}>
+          <Marker position={coords}>
             <Popup>{company.name_of_the_company}</Popup>
           </Marker>
         </MapContainer>
       );
     });
-  }, [company]);
+  }, [company, coords]);
 
-  if (!company.latitude || !company.longitude) {
+  if (!coords) {
     return (
       <div className="flex h-full items-center justify-center bg-gray-100 text-sm text-gray-400">
         No location data available

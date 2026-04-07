@@ -11,6 +11,15 @@
   },
   "pluginOptions": {},
   "attributes": {
+    "user_type": {
+      "type": "enumeration",
+      "required": true,
+      "enum": [
+        "company",
+        "investor",
+        "expert"
+      ]
+    },
     "continent": {
       "type": "enumeration",
       "required": true,
@@ -348,6 +357,13 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "plugin::users-permissions.user"
+    },
+    "company_logo": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images"
+      ]
     }
   }
 }

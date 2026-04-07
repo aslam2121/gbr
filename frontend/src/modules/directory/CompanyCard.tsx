@@ -1,8 +1,7 @@
 import Link from "next/link";
 import {
-  Company,
-  EMPLOYEE_COUNT_LABELS,
-  INDUSTRY_LABELS,
+  type Company,
+  AREA_LABELS,
   countryFlag,
 } from "@/types/company";
 
@@ -13,7 +12,8 @@ interface CompanyCardProps {
 }
 
 export function CompanyCard({ company }: CompanyCardProps) {
-  const logoUrl = company.logo?.formats?.small?.url ?? company.logo?.url;
+  const firstLogo = company.company_logo?.[0];
+  const logoUrl = firstLogo?.formats?.small?.url ?? firstLogo?.url;
 
   return (
     <Link
@@ -42,14 +42,9 @@ export function CompanyCard({ company }: CompanyCardProps) {
         </h3>
 
         <div className="mt-2 flex flex-wrap items-center gap-2">
-          {company.industry && (
+          {company.area_of_specification && (
             <span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700">
-              {INDUSTRY_LABELS[company.industry] ?? company.industry}
-            </span>
-          )}
-          {company.employee_count && (
-            <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600">
-              {EMPLOYEE_COUNT_LABELS[company.employee_count] ?? company.employee_count} employees
+              {AREA_LABELS[company.area_of_specification] ?? company.area_of_specification}
             </span>
           )}
         </div>
@@ -74,7 +69,6 @@ export function CompanyCardSkeleton() {
         <div className="h-5 w-3/4 rounded bg-gray-200" />
         <div className="flex gap-2">
           <div className="h-5 w-16 rounded-full bg-gray-200" />
-          <div className="h-5 w-20 rounded-full bg-gray-200" />
         </div>
         <div className="h-4 w-1/2 rounded bg-gray-200" />
       </div>

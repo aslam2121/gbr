@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { strapiGet } from "@/lib/strapi";
-import { type Company } from "@/types/company";
+import { type Company, COUNTRY_COORDS } from "@/types/company";
 
 const CONTINENT_COLORS: Record<string, string> = {
   "North America": "#3B82F6",
@@ -21,37 +21,37 @@ const GEOJSON_TO_STRAPI: Record<string, string> = {
   "Republic of Serbia": "Serbia",
   "United Republic of Tanzania": "Tanzania",
   "Republic of the Congo": "Congo",
-  "Democratic Republic of the Congo": "Congo {Democratic Rep}",
+  "Democratic Republic of the Congo": "Democratic Republic of the Congo",
   "Côte d'Ivoire": "Ivory Coast",
   "The Bahamas": "Bahamas",
   "Guinea Bissau": "Guinea-Bissau",
-  "Republic of Macedonia": "Macedonia",
-  "North Macedonia": "Macedonia",
-  "Timor-Leste": "East Timor",
-  "Myanmar": "Myanmar, {Burma}",
-  "Cabo Verde": "Cape Verde",
-  "eSwatini": "Swaziland",
-  "Antigua and Barbuda": "Antigua & Deps",
-  "Trinidad and Tobago": "Trinidad & Tobago",
-  "Saint Kitts and Nevis": "St Kitts & Nevis",
-  "Saint Lucia": "St Lucia",
-  "Saint Vincent and the Grenadines": "Saint Vincent & the Grenadines",
-  "São Tomé and Príncipe": "Sao Tome & Principe",
-  "Sao Tome and Principe": "Sao Tome & Principe",
-  "Bosnia and Herzegovina": "Bosnia Herzegovina",
+  "Republic of Macedonia": "North Macedonia",
+  "North Macedonia": "North Macedonia",
+  "Timor-Leste": "Timor-Leste",
+  "Myanmar": "Myanmar",
+  "Cabo Verde": "Cabo Verde",
+  "eSwatini": "Eswatini",
+  "Antigua and Barbuda": "Antigua and Barbuda",
+  "Trinidad and Tobago": "Trinidad and Tobago",
+  "Saint Kitts and Nevis": "Saint Kitts and Nevis",
+  "Saint Lucia": "Saint Lucia",
+  "Saint Vincent and the Grenadines": "Saint Vincent and the Grenadines",
+  "São Tomé and Príncipe": "Sao Tome and Principe",
+  "Sao Tome and Principe": "Sao Tome and Principe",
+  "Bosnia and Herzegovina": "Bosnia and Herzegovina",
   "Czechia": "Czech Republic",
-  "South Korea": "Korea South",
-  "Republic of Korea": "Korea South",
-  "North Korea": "Korea North",
-  "Democratic People's Republic of Korea": "Korea North",
+  "South Korea": "South Korea",
+  "Republic of Korea": "South Korea",
+  "North Korea": "North Korea",
+  "Democratic People's Republic of Korea": "North Korea",
   "Lao PDR": "Laos",
-  "Russia": "Russian Federation",
+  "Russia": "Russia",
   "Iran (Islamic Republic of)": "Iran",
   "Syrian Arab Republic": "Syria",
   "Brunei Darussalam": "Brunei",
-  "Burkina Faso": "Burkina",
-  "Central African Republic": "Central African Rep",
-  "Ireland": "Ireland {Republic}",
+  "Burkina Faso": "Burkina Faso",
+  "Central African Republic": "Central African Republic",
+  "Ireland": "Ireland",
   "Federated States of Micronesia": "Micronesia",
   "Viet Nam": "Vietnam",
   "Somaliland": "Somalia",
@@ -66,14 +66,13 @@ function mapGeoJsonCountry(geoName: string): string {
 /** Fetch companies for a specific country from Strapi */
 async function fetchCompaniesByCountry(country: string): Promise<Company[]> {
   try {
-    const res = await strapiGet<Company[]>("/companies", {
+    const res = await strapiGet<Company[]>("/user-profiles", {
+      "filters[user_type][$eq]": "company",
       "filters[country][$eq]": country,
       "fields[0]": "name_of_the_company",
       "fields[1]": "country",
       "fields[2]": "continent",
-      "fields[3]": "latitude",
-      "fields[4]": "longitude",
-      "fields[5]": "industry",
+      "fields[3]": "area_of_specification",
       "pagination[pageSize]": 100,
     });
     return res.data ?? [];
@@ -139,9 +138,14 @@ export default function HomeMap() {
     function addMarkers(companies: Company[]) {
       markerLayer.clearLayers();
       for (const company of companies) {
-        if (!company.latitude || !company.longitude) continue;
+        const coords = COUNTRY_COORDS[company.country];
+        if (!coords) continue;
 
         const color = CONTINENT_COLORS[company.continent ?? ""] ?? "#0083ae";
+
+        // Offset markers slightly so they don't stack on same country point
+        const jitterLat = coords[0] + (Math.random() - 0.5) * 2;
+        const jitterLng = coords[1] + (Math.random() - 0.5) * 2;
 
         const icon = L.divIcon({
           className: "",
@@ -150,13 +154,13 @@ export default function HomeMap() {
           iconAnchor: [6, 6],
         });
 
-        L.marker([company.latitude, company.longitude], { icon })
+        L.marker([jitterLat, jitterLng], { icon })
           .bindPopup(
             `<div style="min-width:150px;">` +
               `<strong><a href="/directory/${company.documentId}" style="color:#0083ae;text-decoration:none;">${company.name_of_the_company}</a></strong>` +
               `<br/><span style="font-size:12px;color:#666;">${company.country}</span>` +
-              (company.industry
-                ? `<br/><span style="font-size:11px;color:#999;text-transform:capitalize;">${company.industry}</span>`
+              (company.area_of_specification
+                ? `<br/><span style="font-size:11px;color:#999;">${company.area_of_specification}</span>`
                 : "") +
               `</div>`
           )
